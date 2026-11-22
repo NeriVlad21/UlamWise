@@ -27,12 +27,21 @@ import {
   computeMemberWeeklyNutrition,
   ensureMemberSchedules,
 } from '../lib/schedule';
+import {
+  formatLongDate,
+  formatWeekRangeLabel,
+  getDayOfWeekIndex,
+  getTodayIsoInTimezone,
+  getWeekDates,
+  getWeekStartIso,
+} from '../lib/calendar';
 import { STORE_MULTIPLIERS } from '../lib/storeConfig';
 import { DishIllustration } from './DishIllustration';
 
 interface HomeViewProps {
   profile: UserProfile;
   plan: WeeklyMealPlan | null;
+  activeWeekStart: string;
   grocery: GroceryListSummary;
   dataset: UlamWiseDataset;
   t: Translations;
@@ -48,6 +57,7 @@ interface HomeViewProps {
 export const HomeView: React.FC<HomeViewProps> = ({
   profile,
   plan,
+  activeWeekStart,
   grocery,
   dataset,
   t,
@@ -70,7 +80,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
     [profile.weeklySchedule, profile.household, profile.includeMerienda]
   );
 
-  const todayIdx = (new Date().getDay() + 6) % 7; // Mon=0..Sun=6
+  const todayIso = getTodayIsoInTimezone();
+  const todayIdx = getDayOfWeekIndex(todayIso); // Mon=0..Sun=6 in Asia/Manila
+  const todayLongLabel = formatLongDate(todayIso);
+  const currentWeekStart = getWeekStartIso(todayIso);
+  const displayWeekStart = activeWeekStart || currentWeekStart;
+  const weekDays = useMemo(() => getWeekDates(displayWeekStart, todayIso), [displayWeekStart, todayIso]);
+  const weekRangeLabel = formatWeekRangeLabel(displayWeekStart);
+  const todayWeekDay = weekDays.find((d) => d.isToday) ?? weekDays[todayIdx];
+
   const todayDayPlan = plan?.days[todayIdx] ?? null;
   const isTodayPlanned = Boolean(todayDayPlan && todayDayPlan.isPlannedDay && todayDayPlan.meals.length > 0);
 
@@ -104,7 +122,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
     <div className="space-y-7">
       {/* Greeting & Quick Actions */}
       <section className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
+        <div className="min-w-0">
           <p className="text-xs font-medium text-[#4E7A68] dark:text-[#86B8A3]">
             {profile.location.cityName}, {profile.location.provinceName} · {storeCfg.shortName} ·{' '}
             {profile.household.length} {profile.household.length === 1 ? 'member' : 'members'}
@@ -112,6 +130,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <h1 className="mt-1 text-3xl sm:text-4xl font-semibold tracking-tight text-[#1E2421] dark:text-[#F2EFE9]">
             {t.home.greeting}
           </h1>
+          <p className="mt-1.5 inline-flex flex-wrap items-center gap-1.5 text-xs sm:text-sm text-[#535E58] dark:text-[#A6B5AE]">
+            <CalendarDays className="w-3.5 h-3.5 text-[#1B4D3E] dark:text-[#86B8A3] shrink-0" aria-hidden="true" />
+            <span className="font-medium text-[#1E2421] dark:text-[#F2EFE9]">{todayLongLabel}</span>
+            <span className="text-[11px] font-mono-tabular">· PHT</span>
+          </p>
         </div>
         <div className="flex flex-wrap gap-2.5">
           <button
@@ -229,9 +252,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
       <section className="rounded-2xl border border-[#E4DDD0] dark:border-[#2A3B34] bg-white dark:bg-[#18221E] p-5 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-semibold flex items-center gap-2">
-              <CalendarDays className="w-4 h-4 text-[#1B4D3E] dark:text-[#86B8A3]" aria-hidden="true" />
+            <h2 className="text-base font-semibold flex flex-wrap items-center gap-2">
+              <CalendarDays className="w-4 h-4 text-[#1B4D3E] dark:text-[#86B8A3] shrink-0" aria-hidden="true" />
               <span>This Week&apos;s Eating Schedule</span>
+              <span className="text-xs font-mono-tabular font-normal text-[#535E58] dark:text-[#A6B5AE]">
+                ({weekRangeLabel})
+              </span>
             </h2>
             <p className="text-xs text-[#535E58] dark:text-[#A6B5AE] mt-0.5">
               Planning meals for {schedule.selectedDays.length}{' '}
@@ -247,19 +273,20 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </button>
         </div>
 
-        <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+        <div className="flex sm:grid sm:grid-cols-7 gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0">
           {ALL_DAYS.map((dayIdx) => {
+            const wd = weekDays[dayIdx];
             const isSelected = schedule.selectedDays.includes(dayIdx);
             const plannedDay = plan?.days[dayIdx];
             const mealCount = plannedDay?.meals.length ?? 0;
-            const isToday = dayIdx === todayIdx;
+            const isToday = wd?.isToday ?? false;
             return (
               <div
                 key={dayIdx}
-                className={`rounded-xl border p-2 sm:p-2.5 text-center transition-colors ${
+                className={`min-w-[62px] sm:min-w-0 shrink-0 sm:shrink rounded-xl border p-2 sm:p-2.5 text-center transition-colors ${
                   isSelected
                     ? isToday
-                      ? 'border-[#1B4D3E] bg-[#1B4D3E]/10 dark:border-[#34926F] dark:bg-[#2B7A5C]/25'
+                      ? 'border-[#C9972B] bg-[#C9972B]/10 dark:border-[#E5BC5E] dark:bg-[#C9972B]/15'
                       : 'border-[#E4DDD0] dark:border-[#2A3B34] bg-[#FAF8F4] dark:bg-[#111815]'
                     : 'border-dashed border-[#E4DDD0] dark:border-[#2A3B34] opacity-55'
                 }`}
@@ -267,8 +294,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <p className="text-[11px] sm:text-xs font-semibold text-[#1E2421] dark:text-[#F2EFE9]">
                   {dayNames[dayIdx].slice(0, 3)}
                 </p>
+                <p
+                  className={`text-xs sm:text-sm font-mono-tabular font-semibold leading-tight mt-0.5 ${
+                    isToday
+                      ? 'text-[#8C6514] dark:text-[#F0CB73]'
+                      : 'text-[#1E2421] dark:text-[#F2EFE9]'
+                  }`}
+                >
+                  {wd?.day}
+                </p>
                 <p className="text-[10px] sm:text-[11px] font-mono-tabular text-[#535E58] dark:text-[#A6B5AE] mt-0.5">
-                  {isSelected ? (plan ? `${mealCount}m` : 'On') : 'Off'}
+                  {isToday ? 'Today' : isSelected ? (plan ? `${mealCount}m` : 'On') : 'Off'}
                 </p>
               </div>
             );
@@ -364,9 +400,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Today's Meals (2 cols) */}
         <section className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-xl font-semibold">
               {t.home.todaysMeals} · {dayNames[todayIdx]}
+              {todayWeekDay ? `, ${todayWeekDay.shortDateLabel}` : ''}
             </h2>
             {plan && (
               <button

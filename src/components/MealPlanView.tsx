@@ -37,11 +37,22 @@ import {
   ensureMemberSchedules,
   getEffectiveConstraintsForParticipants,
 } from '../lib/schedule';
+import {
+  formatShortDateWithYear,
+  formatWeekRangeLabel,
+  getDayOfWeekIndex,
+  getTodayIsoInTimezone,
+  getWeekDates,
+  isIsoInWeek,
+} from '../lib/calendar';
 import { DishIllustration } from './DishIllustration';
+import { WeeklyCalendarBar } from './WeeklyCalendarBar';
 
 interface MealPlanViewProps {
   profile: UserProfile;
   plan: WeeklyMealPlan | null;
+  selectedWeekStart: string;
+  onChangeWeek: (nextWeekStartIso: string) => void;
   dataset: UlamWiseDataset;
   t: Translations;
   isGenerating: boolean;
@@ -68,6 +79,8 @@ interface MealPlanViewProps {
 export const MealPlanView: React.FC<MealPlanViewProps> = ({
   profile,
   plan,
+  selectedWeekStart,
+  onChangeWeek,
   dataset,
   t,
   isGenerating,
@@ -90,35 +103,55 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({
   onLoadSavedPlan,
   onDeleteSavedPlan,
 }) => {
+  const todayIso = getTodayIsoInTimezone();
   const [subTab, setSubTab] = useState<'week' | 'saved' | 'favorites'>('week');
-  const [selectedDay, setSelectedDay] = useState<number>(0);
+  const [selectedDay, setSelectedDay] = useState<number>(() =>
+    isIsoInWeek(todayIso, selectedWeekStart) ? getDayOfWeekIndex(todayIso) : 0
+  );
   const [swapTarget, setSwapTarget] = useState<{ dayIndex: number; slot: MealSlot } | null>(null);
   const [planSavedToast, setPlanSavedToast] = useState(false);
 
   const dayNames = profile.language === 'tl' ? DAY_NAMES_TL : DAY_NAMES_EN;
+  const weekDays = useMemo(
+    () => getWeekDates(selectedWeekStart, todayIso),
+    [selectedWeekStart, todayIso]
+  );
+  const weekRangeLabel = formatWeekRangeLabel(selectedWeekStart);
 
   const schedule = useMemo(
     () => ensureMemberSchedules(profile.weeklySchedule, profile.household, profile.includeMerienda),
     [profile.weeklySchedule, profile.household, profile.includeMerienda]
   );
 
-  // Only show planned days that actually have meals in the day selector
+  // Only show planned days that actually have meals
   const plannedDays = useMemo(() => {
-    if (!plan) return [];
+    if (!plan || plan.validationStatus === 'insufficient_recipes') return [];
     return plan.days.filter((d) => d.isPlannedDay && d.meals.length > 0);
   }, [plan]);
 
   useEffect(() => {
-    if (plannedDays.length === 0) return;
-    if (!plannedDays.some((d) => d.dayIndex === selectedDay)) {
-      setSelectedDay(plannedDays[0].dayIndex);
+    // Keep selected day within 0..6; if navigating to current week, highlight today when sensible
+    if (selectedDay < 0 || selectedDay > 6) {
+      setSelectedDay(0);
     }
-  }, [plannedDays, selectedDay]);
+  }, [selectedDay]);
 
   const activeDay = useMemo(
-    () => plannedDays.find((d) => d.dayIndex === selectedDay) ?? plannedDays[0] ?? null,
+    () => plannedDays.find((d) => d.dayIndex === selectedDay) ?? null,
     [plannedDays, selectedDay]
   );
+  const selectedCalendarDay = weekDays[selectedDay] ?? weekDays[0];
+
+  const handleCalendarWeekChange = (nextWeekStartIso: string, focusDayIndex?: number) => {
+    onChangeWeek(nextWeekStartIso);
+    if (typeof focusDayIndex === 'number' && focusDayIndex >= 0 && focusDayIndex <= 6) {
+      setSelectedDay(focusDayIndex);
+    } else if (isIsoInWeek(todayIso, nextWeekStartIso)) {
+      setSelectedDay(getDayOfWeekIndex(todayIso));
+    } else {
+      setSelectedDay(schedule.selectedDays[0] ?? 0);
+    }
+  };
 
   const dailySummary = useMemo(() => {
     if (!activeDay) {
@@ -237,9 +270,21 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({
         </div>
       </div>
 
-      {/* Mode & Action Toolbar (Week View) */}
+      {/* Mode & Action Toolbar + Weekly Calendar (Week View) */}
       {subTab === 'week' && (
         <>
+          <WeeklyCalendarBar
+            weekStartIso={selectedWeekStart}
+            todayIso={todayIso}
+            selectedDayIndex={selectedDay}
+            dayNames={dayNames}
+            scheduledDayIndices={schedule.selectedDays}
+            plan={plan}
+            hasPlanForWeek={Boolean(plan && plan.validationStatus !== 'insufficient_recipes' && plannedDays.length > 0)}
+            onSelectDay={setSelectedDay}
+            onChangeWeek={handleCalendarWeekChange}
+          />
+
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#E4DDD0] dark:border-[#2A3B34] bg-white dark:bg-[#18221E] p-4">
             <div className="flex flex-wrap items-center gap-2.5">
               {/* Regional vs Everyday mode */}
@@ -365,17 +410,22 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({
               ))}
             </div>
           ) : !plan ? (
-            <div className="rounded-2xl border border-[#E4DDD0] dark:border-[#2A3B34] bg-white dark:bg-[#18221E] p-10 text-center space-y-4">
-              <h2 className="text-xl font-semibold">{t.home.noPlanTitle}</h2>
-              <p className="text-sm text-[#535E58] dark:text-[#A6B5AE] max-w-md mx-auto">
-                {t.home.noPlanDesc}
-              </p>
+            <div className="rounded-2xl border border-[#E4DDD0] dark:border-[#2A3B34] bg-white dark:bg-[#18221E] p-8 sm:p-10 text-center space-y-4">
+              <CalendarDays className="w-8 h-8 mx-auto text-[#4E7A68]" aria-hidden="true" />
+              <div className="space-y-1">
+                <h2 className="text-xl font-semibold">
+                  No meal plan for {weekRangeLabel}
+                </h2>
+                <p className="text-sm text-[#535E58] dark:text-[#A6B5AE] max-w-md mx-auto">
+                  {t.home.noPlanDesc} Your other saved weeks remain safely preserved.
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={onGenerateWeek}
-                className="min-h-[48px] px-6 rounded-xl bg-[#1B4D3E] text-[#FAF8F4] text-sm font-semibold"
+                className="min-h-[48px] px-6 rounded-xl bg-[#1B4D3E] hover:bg-[#143B2F] dark:bg-[#2B7A5C] text-[#FAF8F4] text-sm font-semibold"
               >
-                {t.common.generatePlan}
+                {t.common.generatePlan} ({weekRangeLabel})
               </button>
             </div>
           ) : plan.validationStatus === 'insufficient_recipes' ? (
@@ -494,55 +544,56 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({
             </div>
           ) : (
             <>
-              {/* Planned-Days-Only Horizontal Selector */}
-              <div className="space-y-2">
-                <div
-                  role="tablist"
-                  aria-label="Planned days of the week"
-                  className="flex gap-2 overflow-x-auto pb-1"
-                >
-                  {plannedDays.map((day) => {
-                    const active = activeDay?.dayIndex === day.dayIndex;
-                    const lockedCount = day.meals.filter((m) => m.locked).length;
-                    return (
-                      <button
-                        key={day.dayIndex}
-                        role="tab"
-                        type="button"
-                        aria-selected={active}
-                        onClick={() => setSelectedDay(day.dayIndex)}
-                        className={`min-h-[48px] px-4 py-2 rounded-xl border text-sm font-medium whitespace-nowrap shrink-0 transition-colors ${
-                          active
-                            ? 'border-[#1B4D3E] bg-[#1B4D3E] text-[#FAF8F4] dark:border-[#2B7A5C] dark:bg-[#2B7A5C]'
-                            : 'border-[#E4DDD0] dark:border-[#2A3B34] bg-white dark:bg-[#18221E] text-[#1E2421] dark:text-[#F2EFE9] hover:bg-[#F3EFE6] dark:hover:bg-[#1F2C27]'
-                        }`}
-                      >
-                        <span>
-                          {dayNames[day.dayIndex].slice(0, 3)} · {day.meals.length}{' '}
-                          {day.meals.length === 1 ? 'meal' : 'meals'}
-                        </span>
-                        {lockedCount > 0 && (
-                          <span className="ml-1.5 text-[11px] opacity-80">({lockedCount} locked)</span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-                {skippedDaysCount > 0 && (
-                  <p className="text-xs text-[#535E58] dark:text-[#A6B5AE]">
-                    Showing {plannedDays.length} planned {plannedDays.length === 1 ? 'day' : 'days'} ({skippedDaysCount}{' '}
-                    unselected {skippedDaysCount === 1 ? 'day' : 'days'} skipped from planning and grocery quantities).
-                  </p>
-                )}
-              </div>
+              {skippedDaysCount > 0 && (
+                <p className="text-xs text-[#535E58] dark:text-[#A6B5AE]">
+                  Showing {plannedDays.length} planned {plannedDays.length === 1 ? 'day' : 'days'} for{' '}
+                  <span className="font-mono-tabular font-medium">{weekRangeLabel}</span> ({skippedDaysCount}{' '}
+                  unselected {skippedDaysCount === 1 ? 'day' : 'days'} excluded from meals and grocery quantities).
+                </p>
+              )}
 
-              {/* Daily Summary + Individual Member Nutrition Breakdown */}
-              {activeDay && (
+              {/* Off-day state if user taps an unscheduled day in the Weekly Calendar */}
+              {!activeDay ? (
+                <section className="rounded-2xl border border-[#E4DDD0] dark:border-[#2A3B34] bg-white dark:bg-[#18221E] p-7 text-center space-y-3">
+                  <CalendarDays className="w-7 h-7 mx-auto text-[#4E7A68]" aria-hidden="true" />
+                  <div>
+                    <h2 className="text-base font-semibold">
+                      No meals scheduled for {selectedCalendarDay.fullDateLabel}
+                    </h2>
+                    <p className="mt-1 text-xs sm:text-sm text-[#535E58] dark:text-[#A6B5AE] max-w-md mx-auto">
+                      {dayNames[selectedDay]} is an off-day in your weekly eating schedule, so no meals or grocery quantities were added.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                    {plannedDays[0] && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedDay(plannedDays[0].dayIndex)}
+                        className="min-h-[44px] px-4 rounded-xl bg-[#1B4D3E] dark:bg-[#2B7A5C] text-[#FAF8F4] text-xs font-medium"
+                      >
+                        Go to {dayNames[plannedDays[0].dayIndex]}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={onEditSchedule}
+                      className="min-h-[44px] px-4 rounded-xl border border-[#D8CFC0] dark:border-[#2A3B34] text-xs font-medium hover:bg-[#F3EFE6] dark:hover:bg-[#1F2C27]"
+                    >
+                      Edit Schedule
+                    </button>
+                  </div>
+                </section>
+              ) : (
                 <section className="rounded-2xl border border-[#E4DDD0] dark:border-[#2A3B34] bg-[#F3EFE6]/70 dark:bg-[#18221E] p-4 sm:p-5 space-y-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
                       <h2 className="text-base font-semibold text-[#1E2421] dark:text-[#F2EFE9]">
-                        {dayNames[activeDay.dayIndex]} Summary
+                        {dayNames[activeDay.dayIndex]}, {weekDays[activeDay.dayIndex]?.shortDateLabel} Summary
+                        {weekDays[activeDay.dayIndex]?.isToday && (
+                          <span className="ml-2 text-xs font-semibold text-[#8C6514] dark:text-[#F0CB73]">
+                            · Today
+                          </span>
+                        )}
                       </h2>
                       <p className="text-xs text-[#535E58] dark:text-[#A6B5AE]">
                         {dailySummary.mealCount} scheduled {dailySummary.mealCount === 1 ? 'meal' : 'meals'} ·{' '}
@@ -750,39 +801,49 @@ export const MealPlanView: React.FC<MealPlanViewProps> = ({
               No saved weekly plans yet. Use &ldquo;{t.mealPlan.savePlan}&rdquo; on your schedule to keep a favorite week.
             </div>
           ) : (
-            savedPlans.map((sp) => (
-              <div
-                key={sp.id}
-                className="rounded-2xl border border-[#E4DDD0] dark:border-[#2A3B34] bg-white dark:bg-[#18221E] p-4 flex flex-wrap items-center justify-between gap-4"
-              >
-                <div>
-                  <h3 className="font-semibold text-base">{sp.title}</h3>
-                  <p className="text-xs text-[#535E58] dark:text-[#A6B5AE] font-mono-tabular mt-0.5">
-                    {sp.locationLabel} · Est. {formatPhp(sp.estimatedTotalPhp)} / {formatPhp(sp.weeklyBudgetPhp)} · Saved {new Date(sp.savedAt).toLocaleDateString()}
-                  </p>
+            savedPlans.map((sp) => {
+              const savedWeekStart = sp.weekStartDate ?? sp.plan.weekStartDate;
+              const savedWeekRange = savedWeekStart ? formatWeekRangeLabel(savedWeekStart) : null;
+              return (
+                <div
+                  key={sp.id}
+                  className="rounded-2xl border border-[#E4DDD0] dark:border-[#2A3B34] bg-white dark:bg-[#18221E] p-4 flex flex-wrap items-center justify-between gap-4"
+                >
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-base">{sp.title}</h3>
+                    {savedWeekRange && (
+                      <p className="text-xs font-medium text-[#1B4D3E] dark:text-[#86B8A3] font-mono-tabular mt-0.5">
+                        Week: {savedWeekRange}
+                      </p>
+                    )}
+                    <p className="text-xs text-[#535E58] dark:text-[#A6B5AE] font-mono-tabular mt-0.5">
+                      {sp.locationLabel} · Est. {formatPhp(sp.estimatedTotalPhp)} / {formatPhp(sp.weeklyBudgetPhp)} · Saved{' '}
+                      {formatShortDateWithYear(sp.savedAt.slice(0, 10))}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onLoadSavedPlan(sp);
+                        setSubTab('week');
+                      }}
+                      className="min-h-[44px] px-4 rounded-xl bg-[#1B4D3E] text-[#FAF8F4] text-xs font-medium"
+                    >
+                      Load Plan
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDeleteSavedPlan(sp.id)}
+                      aria-label={`Delete saved plan ${sp.title}`}
+                      className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl border border-[#D8CFC0] dark:border-[#2A3B34] text-[#535E58] hover:text-red-700"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onLoadSavedPlan(sp);
-                      setSubTab('week');
-                    }}
-                    className="min-h-[44px] px-4 rounded-xl bg-[#1B4D3E] text-[#FAF8F4] text-xs font-medium"
-                  >
-                    Load Plan
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onDeleteSavedPlan(sp.id)}
-                    aria-label={`Delete saved plan ${sp.title}`}
-                    className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl border border-[#D8CFC0] dark:border-[#2A3B34] text-[#535E58] hover:text-red-700"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </section>
       )}

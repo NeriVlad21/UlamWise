@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
+  AlertTriangle,
   ArrowLeft,
   ArrowRight,
   Check,
@@ -11,6 +12,8 @@ import {
 import type {
   AllergenId,
   BudgetPreset,
+  CookTimeMode,
+  DietaryPrefCategory,
   DietaryPrefId,
   EquipmentId,
   LanguageCode,
@@ -20,7 +23,12 @@ import type {
   UlamWiseDataset,
   UserProfile,
 } from '../types';
-import { ALLERGEN_LIST, DIETARY_PREFS_LIST } from '../lib/allergens';
+import {
+  ALLERGEN_LIST,
+  DIETARY_CATEGORY_LABELS,
+  DIETARY_PREFS_LIST,
+  detectDietaryConflicts,
+} from '../lib/allergens';
 import { getTranslations } from '../lib/i18n';
 import {
   calculateHouseholdServings,
@@ -37,13 +45,14 @@ import { createHouseholdMember, QUICK_PANTRY_CHIPS } from '../lib/storage';
 import { STORE_LIST, STORE_MULTIPLIERS } from '../lib/storeConfig';
 import { UlamWiseLogoMark } from './Layout';
 import { MemberNutritionCard } from './MemberNutritionCard';
+import { NumericInput } from './NumericInput';
 import { WeeklyScheduleEditor } from './WeeklyScheduleEditor';
 
 interface OnboardingWizardProps {
   profile: UserProfile;
   psgc: PsgcDataset;
   dataset: UlamWiseDataset;
-  onUpdateProfile: (next: UserProfile) => void;
+  onUpdateProfile: (next: UserProfile | ((prev: UserProfile) => UserProfile)) => void;
   onComplete: (finalProfile: UserProfile) => void;
   isGenerating: boolean;
 }
@@ -72,10 +81,25 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
 
   const [dislikesInput, setDislikesInput] = useState(profile.dislikes.join(', '));
   const [customPantryName, setCustomPantryName] = useState('');
-  const [customPantryQty, setCustomPantryQty] = useState('');
+  const [customPantryQty, setCustomPantryQty] = useState<number | undefined>(undefined);
+  const [customPantryQtySyncKey, setCustomPantryQtySyncKey] = useState(0);
   const [customPantryUnit, setCustomPantryUnit] = useState<'g' | 'ml' | 'pc' | 'kg' | 'L'>('g');
   const [customPantrySufficient, setCustomPantrySufficient] = useState(true);
   const [stepError, setStepError] = useState<string | null>(null);
+  const [newlyAddedMemberId, setNewlyAddedMemberId] = useState<string | null>(null);
+  const [cookTimeSyncKeys, setCookTimeSyncKeys] = useState({ B: 0, L: 0, D: 0 });
+  const fieldErrorsRef = useRef<Record<string, string>>({});
+
+  const handleFieldValidityChange = useCallback(
+    (fieldKey: string, isValid: boolean, error: string | null) => {
+      if (isValid || !error) {
+        delete fieldErrorsRef.current[fieldKey];
+      } else {
+        fieldErrorsRef.current[fieldKey] = error;
+      }
+    },
+    []
+  );
 
   const provinces = useMemo(
     () => getProvincesForRegion(psgc, profile.location.regionCode),
@@ -116,24 +140,50 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         setStepError('Please select your region, province, and city/municipality to continue.');
         return;
       }
-      if (step === 3 && profile.household.length === 0) {
-        setStepError('Please include at least one household member.');
-        return;
+      if (step === 3) {
+        if (profile.household.length === 0) {
+          setStepError('Please include at least one household member.');
+          return;
+        }
+        const firstStep3Err = Object.entries(fieldErrorsRef.current).find(
+          ([k]) => k === 'householdSize' || k.includes(':')
+        )?.[1];
+        if (firstStep3Err) {
+          setStepError(firstStep3Err);
+          return;
+        }
       }
       if (step === 4 && ensuredSchedule.selectedDays.length === 0) {
         setStepError('Please select at least one day of the week to plan meals for.');
         return;
       }
-      if (step === 5 && (!profile.weeklyBudgetPhp || profile.weeklyBudgetPhp < 200)) {
-        setStepError('Please enter a weekly budget of at least ₱200.');
-        return;
+      if (step === 5) {
+        const budgetErr = fieldErrorsRef.current['weeklyBudget'];
+        if (budgetErr) {
+          setStepError(budgetErr);
+          return;
+        }
+        if (!profile.weeklyBudgetPhp || profile.weeklyBudgetPhp < 200 || profile.weeklyBudgetPhp > 50000) {
+          setStepError('Weekly budget must be between ₱200 and ₱50,000.');
+          return;
+        }
+      }
+      if (step === 8) {
+        const cookErr = Object.entries(fieldErrorsRef.current).find(([k]) =>
+          k.startsWith('cookTime:')
+        )?.[1];
+        if (cookErr) {
+          setStepError(cookErr);
+          return;
+        }
       }
     }
-    onUpdateProfile({
-      ...profile,
-      weeklySchedule: ensuredSchedule,
-      onboardingStep: Math.min(TOTAL_STEPS, Math.max(1, target)),
-    });
+    const nextStep = Math.min(TOTAL_STEPS, Math.max(1, target));
+    onUpdateProfile((prev) => ({
+      ...prev,
+      weeklySchedule: ensureMemberSchedules(prev.weeklySchedule, prev.household, prev.includeMerienda),
+      onboardingStep: nextStep,
+    }));
   };
 
   const handleRegionChange = (regionCode: string) => {
@@ -196,43 +246,92 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
   };
 
   const handleAddMember = () => {
-    const newMember = createHouseholdMember({
-      id: `m-${Date.now()}`,
-      label: `Member ${profile.household.length + 1}`,
-      age: 26,
-    });
-    const nextHousehold = [...profile.household, newMember];
-    const nextSchedule = ensureMemberSchedules(
-      profile.weeklySchedule,
-      nextHousehold,
-      profile.includeMerienda
-    );
-    onUpdateProfile({
-      ...profile,
-      household: nextHousehold,
-      weeklySchedule: nextSchedule,
+    const newId = `m-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`;
+    setNewlyAddedMemberId(newId);
+    onUpdateProfile((prev) => {
+      const newMember = createHouseholdMember({
+        id: newId,
+        label: `Member ${prev.household.length + 1}`,
+        age: 26,
+      });
+      const nextHousehold = [...prev.household, newMember];
+      const nextSchedule = ensureMemberSchedules(
+        prev.weeklySchedule,
+        nextHousehold,
+        prev.includeMerienda
+      );
+      return {
+        ...prev,
+        household: nextHousehold,
+        weeklySchedule: nextSchedule,
+      };
     });
   };
 
-  const handleUpdateMember = (updated: UserProfile['household'][number]) => {
-    onUpdateProfile({
-      ...profile,
-      household: profile.household.map((m) => (m.id === updated.id ? updated : m)),
+  const handleSetHouseholdSize = (targetSize: number) => {
+    const clamped = Math.max(1, Math.min(12, Math.round(targetSize)));
+    onUpdateProfile((prev) => {
+      if (clamped === prev.household.length) return prev;
+      let nextHousehold = [...prev.household];
+      if (clamped > nextHousehold.length) {
+        const toAdd = clamped - nextHousehold.length;
+        for (let i = 0; i < toAdd; i++) {
+          nextHousehold.push(
+            createHouseholdMember({
+              id: `m-${Date.now()}-${i}-${Math.random().toString(36).slice(2, 5)}`,
+              label: `Member ${nextHousehold.length + 1}`,
+              age: 26,
+            })
+          );
+        }
+      } else {
+        const removedIds = new Set(nextHousehold.slice(clamped).map((m) => m.id));
+        Object.keys(fieldErrorsRef.current).forEach((k) => {
+          const [prefix] = k.split(':');
+          if (removedIds.has(prefix)) delete fieldErrorsRef.current[k];
+        });
+        nextHousehold = nextHousehold.slice(0, clamped);
+      }
+      const nextSchedule = ensureMemberSchedules(
+        prev.weeklySchedule,
+        nextHousehold,
+        prev.includeMerienda
+      );
+      return {
+        ...prev,
+        household: nextHousehold,
+        weeklySchedule: nextSchedule,
+      };
     });
   };
+
+  const handleUpdateMember = useCallback(
+    (updated: UserProfile['household'][number]) => {
+      onUpdateProfile((prev) => ({
+        ...prev,
+        household: prev.household.map((m) => (m.id === updated.id ? updated : m)),
+      }));
+    },
+    [onUpdateProfile]
+  );
 
   const handleRemoveMember = (memberId: string) => {
-    if (profile.household.length <= 1) return;
-    const nextHousehold = profile.household.filter((m) => m.id !== memberId);
-    const nextSchedule = ensureMemberSchedules(
-      profile.weeklySchedule,
-      nextHousehold,
-      profile.includeMerienda
-    );
-    onUpdateProfile({
-      ...profile,
-      household: nextHousehold,
-      weeklySchedule: nextSchedule,
+    Object.keys(fieldErrorsRef.current).forEach((k) => {
+      if (k.startsWith(`${memberId}:`)) delete fieldErrorsRef.current[k];
+    });
+    onUpdateProfile((prev) => {
+      if (prev.household.length <= 1) return prev;
+      const nextHousehold = prev.household.filter((m) => m.id !== memberId);
+      const nextSchedule = ensureMemberSchedules(
+        prev.weeklySchedule,
+        nextHousehold,
+        prev.includeMerienda
+      );
+      return {
+        ...prev,
+        household: nextHousehold,
+        weeklySchedule: nextSchedule,
+      };
     });
   };
 
@@ -300,20 +399,23 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
     e.preventDefault();
     const trimmed = customPantryName.trim();
     if (!trimmed) return;
-    const qtyNum = Number(customPantryQty);
     const item: PantryItem = {
       id: `p-${Date.now()}`,
       name: trimmed,
       quantity:
-        !customPantrySufficient && Number.isFinite(qtyNum) && qtyNum > 0
-          ? qtyNum
+        !customPantrySufficient &&
+        customPantryQty !== undefined &&
+        Number.isFinite(customPantryQty) &&
+        customPantryQty > 0
+          ? customPantryQty
           : undefined,
       unit: customPantryUnit,
       sufficient: customPantrySufficient,
     };
-    onUpdateProfile({ ...profile, pantry: [...profile.pantry, item] });
+    onUpdateProfile((prev) => ({ ...prev, pantry: [...prev.pantry, item] }));
     setCustomPantryName('');
-    setCustomPantryQty('');
+    setCustomPantryQty(undefined);
+    setCustomPantryQtySyncKey((k) => k + 1);
   };
 
   const handleFinish = () => {
@@ -520,15 +622,45 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 </p>
               </div>
 
+              <div className="flex flex-wrap items-end justify-between gap-4 rounded-xl border border-[#E4DDD0] dark:border-[#2A3B34] bg-[#FAF8F4] dark:bg-[#111815] p-3.5">
+                <div className="w-40">
+                  <label
+                    htmlFor="onb-household-size"
+                    className="block text-xs font-medium text-[#535E58] dark:text-[#A6B5AE] mb-1"
+                  >
+                    Household size
+                  </label>
+                  <NumericInput
+                    id="onb-household-size"
+                    value={profile.household.length}
+                    allowDecimal={false}
+                    required
+                    min={1}
+                    max={12}
+                    label="household size"
+                    suffix={profile.household.length === 1 ? 'person' : 'people'}
+                    inputClassName="bg-white dark:bg-[#18221E] font-semibold pr-16"
+                    onValueChange={handleSetHouseholdSize}
+                    onValidityChange={(valid, err) =>
+                      handleFieldValidityChange('householdSize', valid, err)
+                    }
+                  />
+                </div>
+                <p className="text-xs text-[#535E58] dark:text-[#A6B5AE] flex-1 min-w-[200px]">
+                  Type the number of people in your household or use Add Member below to customize each profile.
+                </p>
+              </div>
+
               <div className="space-y-3">
                 {profile.household.map((member, idx) => (
                   <MemberNutritionCard
                     key={member.id}
                     member={member}
                     canRemove={profile.household.length > 1}
-                    defaultExpanded={idx === 0}
+                    defaultExpanded={idx === 0 || member.id === newlyAddedMemberId}
                     onChange={handleUpdateMember}
                     onRemove={() => handleRemoveMember(member.id)}
+                    onFieldValidityChange={handleFieldValidityChange}
                   />
                 ))}
               </div>
@@ -592,26 +724,27 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 <label htmlFor="onb-budget" className="block text-sm font-medium mb-1.5">
                   {t.onboarding.steps.budget.weeklyLabel}
                 </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-base font-semibold text-[#535E58]">
-                    ₱
-                  </span>
-                  <input
-                    id="onb-budget"
-                    type="number"
-                    min={200}
-                    max={50000}
-                    step={50}
-                    value={profile.weeklyBudgetPhp}
-                    onChange={(e) =>
-                      onUpdateProfile({
-                        ...profile,
-                        weeklyBudgetPhp: Math.max(0, Number(e.target.value) || 0),
-                      })
-                    }
-                    className="w-full min-h-[52px] rounded-xl border border-[#D8CFC0] dark:border-[#2A3B34] bg-[#FAF8F4] dark:bg-[#111815] pl-9 pr-4 text-xl font-semibold tabular-nums"
-                  />
-                </div>
+                <NumericInput
+                  id="onb-budget"
+                  value={profile.weeklyBudgetPhp}
+                  allowDecimal={false}
+                  required
+                  min={200}
+                  max={50000}
+                  label="weekly budget"
+                  prefix="₱"
+                  placeholder="e.g., 2000"
+                  inputClassName="min-h-[52px] pl-9 pr-4 text-xl font-semibold"
+                  onValueChange={(weeklyBudgetPhp) =>
+                    onUpdateProfile((prev) => ({
+                      ...prev,
+                      weeklyBudgetPhp,
+                    }))
+                  }
+                  onValidityChange={(valid, err) =>
+                    handleFieldValidityChange('weeklyBudget', valid, err)
+                  }
+                />
               </div>
 
               <div className="grid grid-cols-3 gap-3 rounded-xl bg-[#F3EFE6] dark:bg-[#1F2C27] p-4">
@@ -792,30 +925,84 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 </div>
               </div>
 
-              <div>
-                <p className="text-sm font-semibold mb-2.5">
+              <div className="space-y-4">
+                <p className="text-sm font-semibold">
                   {t.onboarding.steps.allergies.dietaryLabel}
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {DIETARY_PREFS_LIST.map((d) => {
-                    const active = profile.dietaryPrefs.includes(d.id);
-                    return (
-                      <button
-                        key={d.id}
-                        type="button"
-                        onClick={() => toggleDietary(d.id)}
-                        aria-pressed={active}
-                        className={`min-h-[44px] px-3.5 py-2 rounded-xl border text-sm font-medium transition-colors ${
-                          active
-                            ? 'border-[#1B4D3E] bg-[#1B4D3E] text-[#FAF8F4] dark:border-[#2B7A5C] dark:bg-[#2B7A5C]'
-                            : 'border-[#D8CFC0] dark:border-[#2A3B34] text-[#1E2421] dark:text-[#F2EFE9] hover:bg-[#F3EFE6] dark:hover:bg-[#1F2C27]'
-                        }`}
+                {(['eating_style', 'nutrition_goal', 'food_exclusion'] as DietaryPrefCategory[]).map(
+                  (cat) => (
+                    <div key={cat} className="space-y-2">
+                      <p className="text-xs font-semibold text-[#535E58] dark:text-[#A6B5AE]">
+                        {DIETARY_CATEGORY_LABELS[cat].en}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {DIETARY_PREFS_LIST.filter((d) => d.category === cat).map((d) => {
+                          const active = profile.dietaryPrefs.includes(d.id);
+                          return (
+                            <button
+                              key={d.id}
+                              type="button"
+                              onClick={() => toggleDietary(d.id)}
+                              aria-pressed={active}
+                              className={`min-h-[42px] px-3 py-1.5 rounded-xl border text-xs sm:text-sm font-medium transition-colors ${
+                                active
+                                  ? 'border-[#1B4D3E] bg-[#1B4D3E] text-[#FAF8F4] dark:border-[#2B7A5C] dark:bg-[#2B7A5C]'
+                                  : 'border-[#D8CFC0] dark:border-[#2A3B34] text-[#1E2421] dark:text-[#F2EFE9] hover:bg-[#F3EFE6] dark:hover:bg-[#1F2C27]'
+                              }`}
+                            >
+                              {d.labelEn}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )
+                )}
+
+                {profile.dietaryPrefs.includes('keto') && (
+                  <div className="rounded-xl border border-[#E4DDD0] dark:border-[#2A3B34] bg-[#FAF8F4] dark:bg-[#111815] p-3.5 flex flex-wrap items-end justify-between gap-3">
+                    <div className="w-48">
+                      <label
+                        htmlFor="onb-keto-carbs"
+                        className="block text-xs font-medium text-[#535E58] dark:text-[#A6B5AE] mb-1"
                       >
-                        {d.labelEn}
-                      </button>
-                    );
-                  })}
-                </div>
+                        Keto daily carb target
+                      </label>
+                      <NumericInput
+                        id="onb-keto-carbs"
+                        value={profile.ketoMaxCarbsPerDayG ?? 25}
+                        allowDecimal={false}
+                        required
+                        min={10}
+                        max={60}
+                        label="keto carb target"
+                        suffix="g/day"
+                        inputClassName="pr-16 font-semibold bg-white dark:bg-[#18221E]"
+                        onValueChange={(ketoMaxCarbsPerDayG) =>
+                          onUpdateProfile((prev) => ({ ...prev, ketoMaxCarbsPerDayG }))
+                        }
+                      />
+                    </div>
+                    <p className="text-xs text-[#535E58] dark:text-[#A6B5AE] flex-1 min-w-[200px]">
+                      Keto enforces stricter per-dish carb limits computed from ingredient quantities than ordinary Low-carb.
+                    </p>
+                  </div>
+                )}
+
+                {detectDietaryConflicts(profile.dietaryPrefs).map((c, idx) => (
+                  <div
+                    key={idx}
+                    role="alert"
+                    className={`flex items-start gap-2 rounded-xl border p-3 text-xs ${
+                      c.severity === 'conflict'
+                        ? 'border-red-500/40 bg-red-50 dark:bg-red-950/30 text-red-900 dark:text-red-200'
+                        : 'border-amber-500/40 bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200'
+                    }`}
+                  >
+                    <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
+                    <span>{c.message}</span>
+                  </div>
+                ))}
               </div>
 
               <div>
@@ -887,40 +1074,125 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 </div>
               </div>
 
-              <div>
-                <p className="text-sm font-semibold mb-3">
-                  {t.onboarding.steps.kitchen.maxTimeLabel}
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {(['B', 'L', 'D'] as const).map((slotKey) => (
-                    <div key={slotKey}>
-                      <label htmlFor={`time-${slotKey}`} className="block text-xs font-medium mb-1">
-                        {t.slots[slotKey]}
-                      </label>
-                      <select
-                        id={`time-${slotKey}`}
-                        value={profile.maxCookTime[slotKey]}
-                        onChange={(e) =>
-                          onUpdateProfile({
-                            ...profile,
-                            maxCookTime: {
-                              ...profile.maxCookTime,
-                              [slotKey]: Number(e.target.value),
-                            },
-                          })
-                        }
-                        className="w-full min-h-[46px] rounded-xl border border-[#D8CFC0] dark:border-[#2A3B34] bg-[#FAF8F4] dark:bg-[#111815] px-3 text-sm tabular-nums"
-                      >
-                        <option value={20}>Up to 20 min</option>
-                        <option value={30}>Up to 30 min</option>
-                        <option value={45}>Up to 45 min</option>
-                        <option value={60}>Up to 60 min</option>
-                        <option value={90}>Up to 90 min</option>
-                        <option value={150}>No limit (150+ min)</option>
-                      </select>
-                    </div>
-                  ))}
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm font-semibold mb-2.5">
+                    Cooking Time Preference
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    {(
+                      [
+                        {
+                          id: 'flexible',
+                          label: 'Flexible / No limit',
+                          desc: 'Default — includes classic simmered ulam like adobo, tinola & nilaga.',
+                        },
+                        {
+                          id: 'prefer_quick',
+                          label: 'Prefer quicker meals',
+                          desc: 'Ranks faster dishes higher without blocking traditional recipes.',
+                        },
+                        {
+                          id: 'strict',
+                          label: 'Strict time limit',
+                          desc: 'Excludes dishes exceeding the minute limits below.',
+                        },
+                      ] as Array<{ id: CookTimeMode; label: string; desc: string }>
+                    ).map((mode) => {
+                      const active = (profile.cookTimeMode ?? 'flexible') === mode.id;
+                      return (
+                        <button
+                          key={mode.id}
+                          type="button"
+                          onClick={() =>
+                            onUpdateProfile((prev) => ({ ...prev, cookTimeMode: mode.id }))
+                          }
+                          aria-pressed={active}
+                          className={`text-left rounded-xl border p-3.5 transition-colors ${
+                            active
+                              ? 'border-[#1B4D3E] bg-[#1B4D3E]/8 dark:border-[#34926F] dark:bg-[#2B7A5C]/20'
+                              : 'border-[#E4DDD0] dark:border-[#2A3B34] hover:bg-[#FAF8F4] dark:hover:bg-[#1F2C27]'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-sm font-semibold">{mode.label}</span>
+                            {active && <Check className="w-4 h-4 text-[#1B4D3E] dark:text-[#86B8A3]" />}
+                          </div>
+                          <p className="mt-1 text-xs text-[#535E58] dark:text-[#A6B5AE]">
+                            {mode.desc}
+                          </p>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
+
+                {(profile.cookTimeMode ?? 'flexible') !== 'flexible' && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+                    {(['B', 'L', 'D'] as const).map((slotKey) => (
+                      <div key={slotKey} className="space-y-2">
+                        <label htmlFor={`time-${slotKey}`} className="block text-xs font-medium">
+                          {t.slots[slotKey]} ({profile.cookTimeMode === 'strict' ? 'max' : 'preferred'} minutes)
+                        </label>
+                        <NumericInput
+                          id={`time-${slotKey}`}
+                          value={profile.maxCookTime[slotKey]}
+                          allowDecimal={false}
+                          required
+                          min={10}
+                          max={240}
+                          label={`${t.slots[slotKey]} cooking time`}
+                          suffix="min"
+                          placeholder="e.g., 30"
+                          externalSyncKey={cookTimeSyncKeys[slotKey]}
+                          onValueChange={(mins) =>
+                            onUpdateProfile((prev) => ({
+                              ...prev,
+                              maxCookTime: {
+                                ...prev.maxCookTime,
+                                [slotKey]: mins,
+                              },
+                            }))
+                          }
+                          onValidityChange={(valid, err) =>
+                            handleFieldValidityChange(`cookTime:${slotKey}`, valid, err)
+                          }
+                        />
+                        <div className="flex flex-wrap gap-1">
+                          {[20, 30, 45, 60, 90, 150].map((presetMin) => {
+                            const active = profile.maxCookTime[slotKey] === presetMin;
+                            return (
+                              <button
+                                key={presetMin}
+                                type="button"
+                                onClick={() => {
+                                  onUpdateProfile((prev) => ({
+                                    ...prev,
+                                    maxCookTime: {
+                                      ...prev.maxCookTime,
+                                      [slotKey]: presetMin,
+                                    },
+                                  }));
+                                  setCookTimeSyncKeys((prev) => ({
+                                    ...prev,
+                                    [slotKey]: prev[slotKey] + 1,
+                                  }));
+                                }}
+                                className={`px-2 py-1 rounded-lg border text-[11px] font-mono-tabular transition-colors ${
+                                  active
+                                    ? 'border-[#1B4D3E] bg-[#1B4D3E] text-[#FAF8F4] dark:border-[#2B7A5C] dark:bg-[#2B7A5C]'
+                                    : 'border-[#D8CFC0] dark:border-[#2A3B34] text-[#535E58] dark:text-[#A6B5AE] hover:bg-[#F3EFE6] dark:hover:bg-[#1F2C27]'
+                                }`}
+                              >
+                                {presetMin === 150 ? '150+' : `${presetMin}m`}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -986,14 +1258,20 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                   />
                   {!customPantrySufficient && (
                     <>
-                      <input
-                        type="number"
-                        min={1}
+                      <NumericInput
                         value={customPantryQty}
-                        onChange={(e) => setCustomPantryQty(e.target.value)}
+                        allowDecimal
+                        required={false}
+                        min={0.1}
+                        max={50000}
+                        label="quantity"
                         placeholder="Qty"
-                        aria-label="Pantry quantity"
-                        className="w-24 min-h-[44px] rounded-lg border border-[#D8CFC0] dark:border-[#2A3B34] bg-white dark:bg-[#18221E] px-3 text-sm tabular-nums"
+                        ariaLabel="Pantry quantity"
+                        className="w-28"
+                        inputClassName="bg-white dark:bg-[#18221E] rounded-lg"
+                        externalSyncKey={customPantryQtySyncKey}
+                        onValueChange={(qty) => setCustomPantryQty(qty)}
+                        onEmptyChange={() => setCustomPantryQty(undefined)}
                       />
                       <select
                         value={customPantryUnit}

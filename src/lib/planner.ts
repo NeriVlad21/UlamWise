@@ -267,7 +267,15 @@ function scoreDishCandidate(
     if (budgetRatio > 1.35) score -= Math.min(16, (budgetRatio - 1.3) * 14);
   }
 
-  // Smart ingredient reuse & pantry bonus
+  // Cooking-time preference scoring when mode is 'prefer_quick' (soft preference, never hard exclusion)
+  if ((profile.cookTimeMode ?? 'flexible') === 'prefer_quick' && slot !== 'M') {
+    const preferredMax = profile.maxCookTime[slot] || 40;
+    if (dish.time_min <= preferredMax) score += 12;
+    else if (dish.time_min <= preferredMax + 15) score -= 4;
+    else score -= 12;
+  }
+
+  // Smart Filipino batch-buying ingredient reuse & pantry bonus (encourages shared chicken/pork/tokwa/staples across week)
   const dishIngs = dataset.dishIngredientsByDishId.get(dish.dish_id) ?? [];
   const pantryIds = new Set(
     profile.pantry.map((p) => p.ingredientId).filter((id): id is string => Boolean(id))
@@ -278,7 +286,7 @@ function scoreDishCandidate(
     if (row.role === 'main' && usedIngredientIds.has(row.ingredient_id)) reuseHits++;
     if (pantryIds.has(row.ingredient_id)) pantryHits++;
   }
-  score += Math.min(8, reuseHits * 2);
+  score += Math.min(11, reuseHits * 3);
   score += Math.min(7, pantryHits * 2);
 
   score += seedJitter;
@@ -305,12 +313,14 @@ export function getEligibleDishesForConstraints(
     allergies: AllergenId[];
     dietaryPrefs: DietaryPrefId[];
     dislikes: string[];
+    ketoMaxCarbsPerDayG?: number;
   },
   profile: UserProfile,
   dataset: UlamWiseDataset,
   options?: { allowRelaxCookTime?: boolean }
 ): { dishes: Dish[]; relaxedNote?: string } {
   const allowRelaxCookTime = Boolean(options?.allowRelaxCookTime);
+  const cookTimeMode = profile.cookTimeMode ?? 'flexible';
   const strict = dataset.dishes.filter(
     (d) =>
       isDishEligibleForConstraints(
@@ -320,7 +330,7 @@ export function getEligibleDishesForConstraints(
         profile.equipment,
         profile.maxCookTime,
         dataset,
-        { relaxTime: allowRelaxCookTime }
+        { relaxTime: allowRelaxCookTime, cookTimeMode }
       ).eligible
   );
   return { dishes: strict };
@@ -385,7 +395,7 @@ function buildInitialDaysWithValidLocks(
         profile.equipment,
         profile.maxCookTime,
         dataset,
-        { relaxTime: allowRelaxCookTime }
+        { relaxTime: allowRelaxCookTime, cookTimeMode: profile.cookTimeMode ?? 'flexible' }
       ).eligible;
       if (!eligible) continue;
 
@@ -960,6 +970,7 @@ function buildInsufficientRecipesDiagnostics(
   const suggestedMaxDays = shorterProbe?.plannedDaysCount ?? 0;
 
   const householdConstraints = getEffectiveConstraintsForParticipants(profile.household, profile);
+  const cookTimeMode = profile.cookTimeMode ?? 'flexible';
   const exclusionBySlot: Record<MealSlot, RecipeExclusionDiagnostics> = {
     B: computeRecipeExclusionDiagnostics(
       'B',
@@ -967,7 +978,7 @@ function buildInsufficientRecipesDiagnostics(
       profile.equipment,
       profile.maxCookTime,
       dataset,
-      { relaxTime: options.allowRelaxCookTime }
+      { relaxTime: options.allowRelaxCookTime, cookTimeMode }
     ),
     L: computeRecipeExclusionDiagnostics(
       'L',
@@ -975,7 +986,7 @@ function buildInsufficientRecipesDiagnostics(
       profile.equipment,
       profile.maxCookTime,
       dataset,
-      { relaxTime: options.allowRelaxCookTime }
+      { relaxTime: options.allowRelaxCookTime, cookTimeMode }
     ),
     D: computeRecipeExclusionDiagnostics(
       'D',
@@ -983,7 +994,7 @@ function buildInsufficientRecipesDiagnostics(
       profile.equipment,
       profile.maxCookTime,
       dataset,
-      { relaxTime: options.allowRelaxCookTime }
+      { relaxTime: options.allowRelaxCookTime, cookTimeMode }
     ),
     M: computeRecipeExclusionDiagnostics(
       'M',
@@ -991,7 +1002,7 @@ function buildInsufficientRecipesDiagnostics(
       profile.equipment,
       profile.maxCookTime,
       dataset,
-      { relaxTime: options.allowRelaxCookTime }
+      { relaxTime: options.allowRelaxCookTime, cookTimeMode }
     ),
   };
 
@@ -1157,6 +1168,7 @@ export function generateDeterministicWeeklyPlan(
             }
           : undefined;
       const householdConstraints = getEffectiveConstraintsForParticipants(profile.household, profile);
+      const cookTimeMode = profile.cookTimeMode ?? 'flexible';
       const exclusionBySlot: Record<MealSlot, RecipeExclusionDiagnostics> = {
         B: computeRecipeExclusionDiagnostics(
           'B',
@@ -1164,7 +1176,7 @@ export function generateDeterministicWeeklyPlan(
           profile.equipment,
           profile.maxCookTime,
           dataset,
-          { relaxTime: allowRelaxCookTime }
+          { relaxTime: allowRelaxCookTime, cookTimeMode }
         ),
         L: computeRecipeExclusionDiagnostics(
           'L',
@@ -1172,7 +1184,7 @@ export function generateDeterministicWeeklyPlan(
           profile.equipment,
           profile.maxCookTime,
           dataset,
-          { relaxTime: allowRelaxCookTime }
+          { relaxTime: allowRelaxCookTime, cookTimeMode }
         ),
         D: computeRecipeExclusionDiagnostics(
           'D',
@@ -1180,7 +1192,7 @@ export function generateDeterministicWeeklyPlan(
           profile.equipment,
           profile.maxCookTime,
           dataset,
-          { relaxTime: allowRelaxCookTime }
+          { relaxTime: allowRelaxCookTime, cookTimeMode }
         ),
         M: computeRecipeExclusionDiagnostics(
           'M',
@@ -1188,7 +1200,7 @@ export function generateDeterministicWeeklyPlan(
           profile.equipment,
           profile.maxCookTime,
           dataset,
-          { relaxTime: allowRelaxCookTime }
+          { relaxTime: allowRelaxCookTime, cookTimeMode }
         ),
       };
 
@@ -1358,7 +1370,7 @@ export function validateAndEnrichGeminiPlan(
       profile.equipment,
       profile.maxCookTime,
       dataset,
-      { relaxTime: allowRelaxCookTime }
+      { relaxTime: allowRelaxCookTime, cookTimeMode: profile.cookTimeMode ?? 'flexible' }
     );
     if (!eligibility.eligible) continue;
 
@@ -1488,7 +1500,7 @@ export function regenerateSingleMeal(
       profile.equipment,
       profile.maxCookTime,
       dataset,
-      { relaxTime: allowRelaxCookTime }
+      { relaxTime: allowRelaxCookTime, cookTimeMode: profile.cookTimeMode ?? 'flexible' }
     );
     if (!eligibility.eligible) {
       return {

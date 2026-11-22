@@ -428,6 +428,10 @@ export interface PlanValidationIssue {
 export interface WeeklyMealPlan {
   id: string;
   createdAt: string;
+  /** Monday ISO date (YYYY-MM-DD, Asia/Manila) for this planning week */
+  weekStartDate?: string;
+  /** Sunday ISO date (YYYY-MM-DD, Asia/Manila) for this planning week */
+  weekEndDate?: string;
   source: 'gemini' | 'deterministic';
   fallbackReason?: string;
   mealMode: MealSelectionMode;
@@ -451,6 +455,10 @@ export interface SavedWeeklyPlan {
   id: string;
   title: string;
   savedAt: string;
+  /** Monday ISO date (YYYY-MM-DD) associated with this saved week */
+  weekStartDate?: string;
+  /** Sunday ISO date (YYYY-MM-DD) associated with this saved week */
+  weekEndDate?: string;
   locationLabel: string;
   weeklyBudgetPhp: number;
   estimatedTotalPhp: number;

@@ -31,6 +31,7 @@ import {
   loadSavedPlans,
   loadTheme,
   loadValidatedMealPlan,
+  loadWeeklyPlansByWeek,
   resetAllLocalData,
   saveAppliedSwaps,
   saveCheckedGrocery,
@@ -40,7 +41,14 @@ import {
   saveProfile,
   saveSavedPlans,
   saveTheme,
+  saveWeeklyPlansByWeek,
 } from './lib/storage';
+import {
+  formatWeekRangeLabel,
+  getTodayIsoInTimezone,
+  getWeekEndIso,
+  getWeekStartIso,
+} from './lib/calendar';
 import { isCachedMealPlanValid } from './lib/variety';
 import { GroceryView } from './components/GroceryView';
 import { HomeView } from './components/HomeView';
@@ -76,18 +84,62 @@ export function App() {
     return loadProfile();
   });
 
+  // Always default to the current Philippine (Asia/Manila) calendar week
+  const initialWeekStart = useMemo(() => getWeekStartIso(getTodayIsoInTimezone()), []);
+  const [selectedWeekStart, setSelectedWeekStart] = useState<string>(initialWeekStart);
+
   const initialPlanLoad = useMemo(() => {
+    const byWeekRaw = loadWeeklyPlansByWeek(profile);
+    const validByWeek: Record<string, WeeklyMealPlan> = {};
+    for (const [wk, wp] of Object.entries(byWeekRaw)) {
+      if (isCachedMealPlanValid(wp, profile, dataset)) {
+        validByWeek[wk] = {
+          ...wp,
+          weekStartDate: wp.weekStartDate ?? wk,
+          weekEndDate: wp.weekEndDate ?? getWeekEndIso(wk),
+          warnings: [],
+          validationStatus: 'valid',
+        };
+      }
+    }
+
     const validated = loadValidatedMealPlan(profile, dataset);
-    if (validated.plan) return validated;
+    if (validated.plan) {
+      const planWeekStart = validated.plan.weekStartDate ?? initialWeekStart;
+      const stamped: WeeklyMealPlan = {
+        ...validated.plan,
+        weekStartDate: planWeekStart,
+        weekEndDate: validated.plan.weekEndDate ?? getWeekEndIso(planWeekStart),
+      };
+      if (!validByWeek[planWeekStart]) {
+        validByWeek[planWeekStart] = stamped;
+        saveWeeklyPlansByWeek(validByWeek);
+      }
+      const currentWeekPlan = validByWeek[initialWeekStart] ?? (planWeekStart === initialWeekStart ? stamped : null);
+      return {
+        plan: currentWeekPlan,
+        plansByWeek: validByWeek,
+        invalidatedStaleCache: false,
+      };
+    }
 
     // If a stale invalid cached plan was cleared on load for a completed profile,
-    // immediately generate a clean validated schedule using the local engine (preserving all user data).
+    // immediately generate a clean validated schedule for the current week (preserving all user data).
     if (validated.invalidatedStaleCache && profile.onboardingCompleted) {
-      const fresh = generateDeterministicWeeklyPlan(profile, dataset, {
+      const rawFresh = generateDeterministicWeeklyPlan(profile, dataset, {
         seed: Date.now(),
       });
+      const fresh: WeeklyMealPlan = {
+        ...rawFresh,
+        weekStartDate: initialWeekStart,
+        weekEndDate: getWeekEndIso(initialWeekStart),
+      };
       saveMealPlan(fresh);
-      return { plan: fresh, invalidatedStaleCache: true };
+      if (fresh.validationStatus !== 'insufficient_recipes') {
+        validByWeek[initialWeekStart] = fresh;
+        saveWeeklyPlansByWeek(validByWeek);
+      }
+      return { plan: fresh, plansByWeek: validByWeek, invalidatedStaleCache: true };
     }
 
     const params = new URLSearchParams(window.location.search);
@@ -95,17 +147,31 @@ export function App() {
       const demoProfile = loadProfile().onboardingCompleted
         ? loadProfile()
         : createAutostartDemoProfile();
-      const seeded = generateDeterministicWeeklyPlan(demoProfile, dataset, {
+      const rawSeeded = generateDeterministicWeeklyPlan(demoProfile, dataset, {
         seed: 2026,
       });
+      const seeded: WeeklyMealPlan = {
+        ...rawSeeded,
+        weekStartDate: initialWeekStart,
+        weekEndDate: getWeekEndIso(initialWeekStart),
+      };
       saveMealPlan(seeded);
-      return { plan: seeded, invalidatedStaleCache: false };
+      validByWeek[initialWeekStart] = seeded;
+      saveWeeklyPlansByWeek(validByWeek);
+      return { plan: seeded, plansByWeek: validByWeek, invalidatedStaleCache: false };
     }
-    return { plan: null, invalidatedStaleCache: validated.invalidatedStaleCache };
+    return {
+      plan: validByWeek[initialWeekStart] ?? null,
+      plansByWeek: validByWeek,
+      invalidatedStaleCache: validated.invalidatedStaleCache,
+    };
     // Run only once on initial boot with initial profile & dataset
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const [weeklyPlansByWeek, setWeeklyPlansByWeek] = useState<Record<string, WeeklyMealPlan>>(
+    () => initialPlanLoad.plansByWeek
+  );
   const [plan, setPlan] = useState<WeeklyMealPlan | null>(() => initialPlanLoad.plan);
   const [actionFeedback, setActionFeedback] = useState<string | null>(() =>
     initialPlanLoad.invalidatedStaleCache
@@ -140,11 +206,17 @@ export function App() {
     saveTheme(theme);
   }, [theme]);
 
-  // Auto-persist profile changes
-  const updateProfile = useCallback((next: UserProfile) => {
-    setProfile(next);
-    saveProfile(next);
-  }, []);
+  // Auto-persist profile changes (supports functional updaters to avoid stale closures on rapid blur + click)
+  const updateProfile = useCallback(
+    (updater: UserProfile | ((prev: UserProfile) => UserProfile)) => {
+      setProfile((prev) => {
+        const next = typeof updater === 'function' ? updater(prev) : updater;
+        saveProfile(next);
+        return next;
+      });
+    },
+    []
+  );
 
   // Derived grocery list always synced with plan, schedule, household, location, store, pantry & swaps
   const grocery = useMemo(
@@ -152,13 +224,50 @@ export function App() {
     [plan, profile, dataset, appliedSwaps]
   );
 
+  const persistPlanForWeek = useCallback(
+    (nextPlan: WeeklyMealPlan, weekStartIso: string) => {
+      const stamped: WeeklyMealPlan = {
+        ...nextPlan,
+        weekStartDate: weekStartIso,
+        weekEndDate: getWeekEndIso(weekStartIso),
+      };
+      setPlan(stamped);
+      if (stamped.validationStatus !== 'insufficient_recipes') {
+        saveMealPlan(stamped);
+        setWeeklyPlansByWeek((prev) => {
+          const updated = { ...prev, [weekStartIso]: stamped };
+          saveWeeklyPlansByWeek(updated);
+          return updated;
+        });
+      }
+    },
+    []
+  );
+
+  // Switch active planning week WITHOUT overwriting any other week's saved plan
+  const handleChangeWeek = useCallback(
+    (nextWeekStartIso: string) => {
+      const normalized = getWeekStartIso(nextWeekStartIso);
+      setSelectedWeekStart(normalized);
+      setActionFeedback(null);
+      const existing = weeklyPlansByWeek[normalized] ?? null;
+      if (existing && isCachedMealPlanValid(existing, profile, dataset)) {
+        setPlan(existing);
+      } else {
+        setPlan(null);
+      }
+    },
+    [weeklyPlansByWeek, profile, dataset]
+  );
+
   // Request schedule-aware meal plan from backend Gemini API with deterministic offline/fallback guarantee
   const generateWeeklyPlan = useCallback(
     async (
       targetProfile: UserProfile,
       keepLockedFrom?: WeeklyMealPlan | null,
-      options?: PlanRelaxationOptions & { optimizeForBudget?: boolean }
+      options?: PlanRelaxationOptions & { optimizeForBudget?: boolean; weekStartIso?: string }
     ) => {
+      const targetWeekStart = options?.weekStartIso ?? selectedWeekStart;
       setIsGenerating(true);
       setActionFeedback(null);
       const safeExistingPlan =
@@ -200,8 +309,7 @@ export function App() {
         ) {
           throw new Error('Received schedule failed local constraint verification');
         }
-        setPlan(data.plan);
-        saveMealPlan(data.plan);
+        persistPlanForWeek(data.plan, targetWeekStart);
         setAppliedSwaps({});
         saveAppliedSwaps({});
       } catch {
@@ -212,15 +320,14 @@ export function App() {
           fallbackReason:
             'Generated locally using the verified UlamWise Filipino regional dataset.',
         });
-        setPlan(fallbackPlan);
-        saveMealPlan(fallbackPlan);
+        persistPlanForWeek(fallbackPlan, targetWeekStart);
         setAppliedSwaps({});
         saveAppliedSwaps({});
       } finally {
         setIsGenerating(false);
       }
     },
-    [dataset]
+    [dataset, selectedWeekStart, persistPlanForWeek]
   );
 
   const handleCompleteOnboarding = async (finalProfile: UserProfile) => {
@@ -244,8 +351,7 @@ export function App() {
             }
       ),
     };
-    setPlan(next);
-    saveMealPlan(next);
+    persistPlanForWeek(next, selectedWeekStart);
   };
 
   const handleRegenerateSingleMeal = (dayIndex: number, slot: MealSlot) => {
@@ -253,8 +359,7 @@ export function App() {
     const res = regenerateSingleMeal(plan, dayIndex, slot, profile, dataset);
     if (res.replaced) {
       setActionFeedback(null);
-      setPlan(res.plan);
-      saveMealPlan(res.plan);
+      persistPlanForWeek(res.plan, selectedWeekStart);
     } else if (res.message) {
       setActionFeedback(res.message);
     }
@@ -265,8 +370,7 @@ export function App() {
     const res = regenerateSingleMeal(plan, dayIndex, slot, profile, dataset, newDishId);
     if (res.replaced) {
       setActionFeedback(null);
-      setPlan(res.plan);
-      saveMealPlan(res.plan);
+      persistPlanForWeek(res.plan, selectedWeekStart);
     } else if (res.message) {
       setActionFeedback(res.message);
     }
@@ -290,16 +394,25 @@ export function App() {
 
   const handleSaveCurrentPlan = () => {
     if (!plan || plan.validationStatus === 'insufficient_recipes') return;
+    const weekStartDate = plan.weekStartDate ?? selectedWeekStart;
+    const weekEndDate = plan.weekEndDate ?? getWeekEndIso(weekStartDate);
+    const stampedPlan: WeeklyMealPlan = {
+      ...plan,
+      weekStartDate,
+      weekEndDate,
+    };
     const entry: SavedWeeklyPlan = {
       id: `saved-${Date.now()}`,
-      title: `${profile.location.cityName} · ${profile.budgetPreset.charAt(0).toUpperCase() + profile.budgetPreset.slice(1)} Week`,
+      title: `${profile.location.cityName} · ${formatWeekRangeLabel(weekStartDate)}`,
       savedAt: new Date().toISOString(),
+      weekStartDate,
+      weekEndDate,
       locationLabel: `${profile.location.cityName}, ${profile.location.provinceName}`,
       weeklyBudgetPhp: profile.weeklyBudgetPhp,
       estimatedTotalPhp: grocery.totalEstimatedPhp,
-      plan,
+      plan: stampedPlan,
     };
-    const next = [entry, ...savedPlans].slice(0, 15);
+    const next = [entry, ...savedPlans].slice(0, 20);
     setSavedPlans(next);
     saveSavedPlans(next);
   };
@@ -311,9 +424,10 @@ export function App() {
       );
       return;
     }
+    const targetWeekStart = saved.weekStartDate ?? saved.plan.weekStartDate ?? selectedWeekStart;
     setActionFeedback(null);
-    setPlan(saved.plan);
-    saveMealPlan(saved.plan);
+    setSelectedWeekStart(targetWeekStart);
+    persistPlanForWeek(saved.plan, targetWeekStart);
     setAppliedSwaps({});
     saveAppliedSwaps({});
   };
@@ -375,7 +489,10 @@ export function App() {
   const handleResetAll = () => {
     resetAllLocalData();
     const fresh = createDefaultProfile();
+    const todayWeek = getWeekStartIso(getTodayIsoInTimezone());
     setProfile(fresh);
+    setSelectedWeekStart(todayWeek);
+    setWeeklyPlansByWeek({});
     setPlan(null);
     setCheckedGrocery({});
     setAppliedSwaps({});
@@ -428,6 +545,7 @@ export function App() {
         <HomeView
           profile={profile}
           plan={plan}
+          activeWeekStart={selectedWeekStart}
           grocery={grocery}
           dataset={dataset}
           t={t}
@@ -448,6 +566,8 @@ export function App() {
         <MealPlanView
           profile={profile}
           plan={plan}
+          selectedWeekStart={selectedWeekStart}
+          onChangeWeek={handleChangeWeek}
           dataset={dataset}
           t={t}
           isGenerating={isGenerating}

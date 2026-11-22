@@ -149,7 +149,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
                 <strong className="text-[#1E2421] dark:text-[#F2EFE9] capitalize">
                   {dish.main_protein}
                 </strong>{' '}
-                · {dish.time_min} {t.common.minutes} · {dish.method}
+                · Prep {dish.prep_min}m · Total {dish.time_min} {t.common.minutes} · {dish.method}
               </p>
               {meal && meal.participatingMemberNames.length > 0 && (
                 <p>
@@ -281,6 +281,19 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
             {meal?.leftoverNote && (
               <p className="mt-4 text-xs text-[#4E7A68] dark:text-[#86B8A3] bg-[#EDF3EF] dark:bg-[#1B2B24] rounded-xl p-3">
                 <strong>{t.mealPlan.leftoverLabel}:</strong> {meal.leftoverNote}
+              </p>
+            )}
+            {dish.source_url && (
+              <p className="mt-3 text-[11px] text-[#535E58] dark:text-[#A6B5AE]">
+                Recipe discovery reference:{' '}
+                <a
+                  href={dish.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-[#1B4D3E] dark:text-[#86B8A3] hover:opacity-80"
+                >
+                  {dish.source_name || dish.source_url}
+                </a>
               </p>
             )}
           </div>

@@ -507,7 +507,7 @@ export function optimizeWeeklyBulkPurchases(
   const chickenDishIds = new Set(chickenItems.flatMap((it) => it.usedInDishIds));
   const totalChickenNetG = chickenItems.reduce((s, it) => s + it.netBaseQty, 0);
 
-  if (chickenDishIds.size >= 2 && totalChickenNetG >= 900) {
+  if (chickenDishIds.size >= 2 && totalChickenNetG >= 750) {
     // Dressed whole chicken: ~72% usable meat/cut-up yield for boneless breast; bone-in cuts use as-purchased weight
     const breastNetG =
       chickenItems.find((it) => it.ingredientId === 'chicken_breast')?.netBaseQty ?? 0;
@@ -515,14 +515,31 @@ export function optimizeWeeklyBulkPurchases(
     // Required whole dressed chicken weight: breast needs ~1/0.72 dressed equiv, bone-in ~1.0x
     const requiredDressedG = boneInNetG + breastNetG / 0.72;
     const candidateBirdSizesG = [1200, 1500, 1800];
-    let bestWholeCombo = { birdCount: 1, wholeBirdSizeG: 1500, totalPurchasedDressedG: 1500 };
-    let minTotalDressedG = Number.POSITIVE_INFINITY;
+    // Evaluate single-size multiples plus realistic mixed 2-bird palengke combinations (e.g. 1.5kg + 1.8kg = 3.3kg)
+    const candidateCombos: Array<{ birdCount: number; wholeBirdSizeG: number; totalPurchasedDressedG: number }> = [];
     for (const sizeG of candidateBirdSizesG) {
       const count = Math.max(1, Math.ceil(requiredDressedG / sizeG));
-      const totalG = count * sizeG;
-      if (totalG < minTotalDressedG || (totalG === minTotalDressedG && count < bestWholeCombo.birdCount)) {
-        minTotalDressedG = totalG;
-        bestWholeCombo = { birdCount: count, wholeBirdSizeG: sizeG, totalPurchasedDressedG: totalG };
+      candidateCombos.push({ birdCount: count, wholeBirdSizeG: sizeG, totalPurchasedDressedG: count * sizeG });
+    }
+    for (const a of candidateBirdSizesG) {
+      for (const b of candidateBirdSizesG) {
+        if (a < b && a + b >= requiredDressedG) {
+          candidateCombos.push({
+            birdCount: 2,
+            wholeBirdSizeG: Math.round((a + b) / 2),
+            totalPurchasedDressedG: a + b,
+          });
+        }
+      }
+    }
+    let bestWholeCombo = candidateCombos[0];
+    for (const combo of candidateCombos) {
+      if (
+        combo.totalPurchasedDressedG < bestWholeCombo.totalPurchasedDressedG ||
+        (combo.totalPurchasedDressedG === bestWholeCombo.totalPurchasedDressedG &&
+          combo.birdCount < bestWholeCombo.birdCount)
+      ) {
+        bestWholeCombo = combo;
       }
     }
     const { birdCount, wholeBirdSizeG, totalPurchasedDressedG } = bestWholeCombo;
@@ -584,7 +601,7 @@ export function optimizeWeeklyBulkPurchases(
         separateCutsCostPhp,
         estimatedSavingsPhp: savingsPhp,
         edibleYieldLabel: `~${formatBaseQuantityLabel(edibleYieldG, 'g')} edible meat (72% yield)`,
-        bonesOrByproductNote: `~${formatBaseQuantityLabel(bonesCarcassG, 'g')} bones & carcass — ideal for tinola, arroz caldo, or sopas broth`,
+        bonesOrByproductNote: `~${formatBaseQuantityLabel(bonesCarcassG, 'g')} bones & carcass (28%) — ideal for tinola, arroz caldo, or sopas broth`,
         leftoverLabel:
           leftoverMeatG > 25
             ? `${formatBaseQuantityLabel(leftoverMeatG, 'g')} extra chicken meat + broth bones`

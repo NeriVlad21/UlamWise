@@ -156,6 +156,13 @@ export function buildDatasetFromRawCsv(raw: RawCsvBundle): UlamWiseDataset {
     const ricePairing =
       v.rice_pairing === 'no' || v.rice_pairing === 'optional' ? v.rice_pairing : 'yes';
 
+    const totalTimeMin = parseOptionalNumber(v.time_min) ?? 30;
+    const explicitPrep = parseOptionalNumber(v.prep_min);
+    const derivedPrepMin =
+      explicitPrep !== null
+        ? Math.min(totalTimeMin, Math.max(2, explicitPrep))
+        : Math.max(5, Math.min(20, Math.round(totalTimeMin * 0.3)));
+
     const dish: Dish = {
       dish_id: id,
       name_en: v.name_en || id,
@@ -164,7 +171,8 @@ export function buildDatasetFromRawCsv(raw: RawCsvBundle): UlamWiseDataset {
       meal_types: slots.length > 0 ? slots : ['L', 'D'],
       main_protein: (v.main_protein || 'mixed').toLowerCase(),
       method: v.method || 'stew',
-      time_min: parseOptionalNumber(v.time_min) ?? 30,
+      prep_min: derivedPrepMin,
+      time_min: totalTimeMin,
       difficulty_1_3: parseOptionalNumber(v.difficulty_1_3) ?? 1,
       equipment: splitSemicolon(v.equipment),
       rice_pairing: ricePairing,
@@ -190,6 +198,8 @@ export function buildDatasetFromRawCsv(raw: RawCsvBundle): UlamWiseDataset {
       high_sugar: parseYesNo(v.high_sugar),
       diet_flags: splitSemicolon(v.diet_flags),
       method_hint: v.method_hint || '',
+      source_name: v.source_name?.trim() || undefined,
+      source_url: v.source_url?.trim() || undefined,
     };
     dishes.push(dish);
     dishesById.set(id, dish);

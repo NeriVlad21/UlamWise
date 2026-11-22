@@ -13,6 +13,7 @@ import type {
   WeeklySchedulePreset,
 } from '../types';
 import { calculateMemberCalorieTarget, getMemberPortionFactor } from './nutrition';
+import { getWeekStartIso } from './calendar';
 
 export const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6] as const;
 export const WEEKDAYS = [0, 1, 2, 3, 4] as const;
@@ -27,11 +28,7 @@ export const DEFAULT_SLOT_CALORIE_WEIGHTS: Record<MealSlot, number> = {
 };
 
 export function getMondayIsoDate(date = new Date()): string {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = day === 0 ? -6 : 1 - day;
-  d.setDate(d.getDate() + diff);
-  return d.toISOString().slice(0, 10);
+  return getWeekStartIso(date);
 }
 
 export function createDaySchedule(

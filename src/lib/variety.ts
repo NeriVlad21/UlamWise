@@ -358,7 +358,8 @@ export function validateCompleteWeeklyPlan(
         dish,
         constraints.dietaryPrefs,
         constraints.dislikes,
-        dataset
+        dataset,
+        { ketoMaxCarbsPerDayG: constraints.ketoMaxCarbsPerDayG }
       );
       if (!diet.eligible) {
         issues.push({
@@ -379,8 +380,8 @@ export function validateCompleteWeeklyPlan(
         });
       }
 
-      // Cooking-time limit check (unless explicitly relaxed by user)
-      if (!allowRelaxCookTime && meal.slot !== 'M') {
+      // Cooking-time limit check (only enforced when cookTimeMode === 'strict' and not relaxed by user)
+      if ((profile.cookTimeMode ?? 'flexible') === 'strict' && !allowRelaxCookTime && meal.slot !== 'M') {
         const maxMin = profile.maxCookTime[meal.slot];
         if (maxMin && dish.time_min > maxMin) {
           issues.push({

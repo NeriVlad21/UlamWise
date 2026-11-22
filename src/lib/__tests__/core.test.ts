@@ -50,9 +50,9 @@ const psgc = getDefaultPsgcDataset();
 test('Dataset validation verifies all 8 CSV files, 226 genuinely distinct dishes, fixed grocery categories, and zero broken references', () => {
   const r = dataset.validationReport;
   assert.ok(r.counts.dishes >= 200, `Expected >= 200 dishes, got ${r.counts.dishes}`);
-  assert.equal(r.counts.dishes, 226);
+  assert.equal(r.counts.dishes, 250);
   assert.equal(r.counts.ingredients, 123);
-  assert.equal(r.counts.dishIngredients, 1881);
+  assert.equal(r.counts.dishIngredients, 2060);
   assert.equal(r.counts.hiddenAllergens, 153);
   assert.equal(r.counts.ingredientSwaps, 32);
   assert.equal(r.counts.regions, 18);
@@ -595,6 +595,7 @@ test('Regression 2: Bounded backtracking solves tough multi-constraint profiles 
 test('Regression 3: Cooking-time and shorter-plan relaxations require explicit user permission', () => {
   const profile = createDefaultProfile();
   profile.dietaryPrefs = ['vegetarian'];
+  profile.cookTimeMode = 'strict';
   profile.maxCookTime = { B: 10, L: 15, D: 15 };
 
   // Without user permission, must NEVER silently violate maxCookTime or variety
@@ -638,6 +639,7 @@ test('Regression 3: Cooking-time and shorter-plan relaxations require explicit u
 test('Regression 4: Gemini validation enforces identical hard rules (rejects duplicates, allergens, slow dishes, and protein floods)', () => {
   const profile = createDefaultProfile();
   profile.allergies = ['shellfish'];
+  profile.cookTimeMode = 'strict';
   profile.maxCookTime = { B: 30, L: 45, D: 45 };
 
   // Inject intentionally invalid Gemini output: duplicates, shellfish allergen, 90m dish > 45m limit, and 4 fish dishes in Days 1-3

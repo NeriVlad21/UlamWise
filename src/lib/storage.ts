@@ -21,6 +21,7 @@ export const PROFILE_SCHEMA_VERSION = 2;
 export const STORAGE_KEYS = {
   profile: 'ulamwise_profile_v1',
   mealPlan: 'ulamwise_meal_plan_v1',
+  weeklyPlansByWeek: 'ulamwise_weekly_plans_by_week_v1',
   checkedGrocery: 'ulamwise_checked_grocery_v1',
   appliedSwaps: 'ulamwise_applied_swaps_v1',
   savedPlans: 'ulamwise_saved_plans_v1',
@@ -347,6 +348,27 @@ export function saveMealPlan(plan: WeeklyMealPlan | null): void {
     return;
   }
   safeWrite(STORAGE_KEYS.mealPlan, plan);
+}
+
+export function loadWeeklyPlansByWeek(profile?: UserProfile): Record<string, WeeklyMealPlan> {
+  const raw = safeRead<Record<string, WeeklyMealPlan>>(STORAGE_KEYS.weeklyPlansByWeek, {});
+  if (!raw || typeof raw !== 'object') return {};
+  const result: Record<string, WeeklyMealPlan> = {};
+  for (const [weekKey, plan] of Object.entries(raw)) {
+    if (!plan || !Array.isArray(plan.days)) continue;
+    const hydrated = profile ? hydrateLegacyMealPlan(plan, profile) : plan;
+    if (hydrated) result[weekKey] = hydrated;
+  }
+  return result;
+}
+
+export function saveWeeklyPlansByWeek(plansByWeek: Record<string, WeeklyMealPlan>): void {
+  const cleaned: Record<string, WeeklyMealPlan> = {};
+  for (const [weekKey, plan] of Object.entries(plansByWeek)) {
+    if (!plan || plan.validationStatus === 'insufficient_recipes') continue;
+    cleaned[weekKey] = plan;
+  }
+  safeWrite(STORAGE_KEYS.weeklyPlansByWeek, cleaned);
 }
 
 export function loadCheckedGrocery(): Record<string, boolean> {

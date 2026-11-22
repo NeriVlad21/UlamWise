@@ -11,17 +11,24 @@ import type {
   ActivityLevel,
   AllergenId,
   BiologicalSexOption,
+  DietaryPrefCategory,
   DietaryPrefId,
   HouseholdMember,
   PortionPreference,
   WeightGoal,
 } from '../types';
-import { ALLERGEN_LIST, DIETARY_PREFS_LIST } from '../lib/allergens';
+import {
+  ALLERGEN_LIST,
+  DIETARY_CATEGORY_LABELS,
+  DIETARY_PREFS_LIST,
+  detectDietaryConflicts,
+} from '../lib/allergens';
 import {
   ACTIVITY_LABELS,
   calculateMemberCalorieTarget,
   getMinorReferenceKcal,
 } from '../lib/nutrition';
+import { NumericInput } from './NumericInput';
 
 interface MemberNutritionCardProps {
   member: HouseholdMember;
@@ -30,6 +37,7 @@ interface MemberNutritionCardProps {
   scheduleSummary?: string;
   onChange: (updated: HouseholdMember) => void;
   onRemove: () => void;
+  onFieldValidityChange?: (fieldKey: string, isValid: boolean, error: string | null) => void;
 }
 
 export const MemberNutritionCard: React.FC<MemberNutritionCardProps> = ({
@@ -39,6 +47,7 @@ export const MemberNutritionCard: React.FC<MemberNutritionCardProps> = ({
   scheduleSummary,
   onChange,
   onRemove,
+  onFieldValidityChange,
 }) => {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -47,8 +56,7 @@ export const MemberNutritionCard: React.FC<MemberNutritionCardProps> = ({
   const cal = useMemo(() => calculateMemberCalorieTarget(member), [member]);
   const isMinor = member.age < 18;
 
-  const handleAgeChange = (rawAge: number) => {
-    const age = Math.max(1, Math.min(110, rawAge || 1));
+  const handleAgeCommit = (age: number) => {
     if (age < 18) {
       onChange({
         ...member,
@@ -155,14 +163,21 @@ export const MemberNutritionCard: React.FC<MemberNutritionCardProps> = ({
               >
                 Age (years)
               </label>
-              <input
+              <NumericInput
                 id={`mem-age-${member.id}`}
-                type="number"
+                value={member.age}
+                allowDecimal={false}
+                required
                 min={1}
                 max={110}
-                value={member.age}
-                onChange={(e) => handleAgeChange(Number(e.target.value))}
-                className="w-full min-h-[44px] rounded-xl border border-[#D8CFC0] dark:border-[#2A3B34] bg-[#FAF8F4] dark:bg-[#111815] px-3 text-sm font-mono-tabular"
+                label="age"
+                unit="years"
+                placeholder="e.g., 28"
+                shouldCommitOnChange={(parsed) => parsed >= 18 || member.age < 18}
+                onValueChange={handleAgeCommit}
+                onValidityChange={(valid, err) =>
+                  onFieldValidityChange?.(`${member.id}:age`, valid, err)
+                }
               />
             </div>
 
@@ -202,21 +217,28 @@ export const MemberNutritionCard: React.FC<MemberNutritionCardProps> = ({
                 >
                   Daily Calorie Estimate (optional manual target, kcal/day)
                 </label>
-                <input
+                <NumericInput
                   id={`mem-minor-kcal-${member.id}`}
-                  type="number"
+                  value={member.manualTargetKcal}
+                  allowDecimal={false}
+                  required
                   min={800}
                   max={3500}
-                  step={50}
-                  value={member.manualTargetKcal}
-                  onChange={(e) =>
+                  label="daily calorie target"
+                  suffix="kcal"
+                  placeholder="e.g., 1500"
+                  className="w-48"
+                  inputClassName="bg-white dark:bg-[#111815] font-semibold"
+                  onValueChange={(kcal) =>
                     onChange({
                       ...member,
                       calorieMode: 'manual',
-                      manualTargetKcal: Math.max(800, Number(e.target.value) || 1500),
+                      manualTargetKcal: kcal,
                     })
                   }
-                  className="w-40 min-h-[44px] rounded-xl border border-[#D8CFC0] dark:border-[#2A3B34] bg-white dark:bg-[#111815] px-3 text-sm font-mono-tabular font-semibold"
+                  onValidityChange={(valid, err) =>
+                    onFieldValidityChange?.(`${member.id}:minorKcal`, valid, err)
+                  }
                 />
               </div>
             </div>
@@ -280,19 +302,20 @@ export const MemberNutritionCard: React.FC<MemberNutritionCardProps> = ({
                     >
                       Height (cm)
                     </label>
-                    <input
+                    <NumericInput
                       id={`mem-height-${member.id}`}
-                      type="number"
+                      value={member.heightCm}
+                      allowDecimal
+                      required
                       min={110}
                       max={230}
-                      value={member.heightCm}
-                      onChange={(e) =>
-                        onChange({
-                          ...member,
-                          heightCm: Math.max(110, Number(e.target.value) || 160),
-                        })
+                      label="height"
+                      suffix="cm"
+                      placeholder="e.g., 167"
+                      onValueChange={(heightCm) => onChange({ ...member, heightCm })}
+                      onValidityChange={(valid, err) =>
+                        onFieldValidityChange?.(`${member.id}:height`, valid, err)
                       }
-                      className="w-full min-h-[44px] rounded-xl border border-[#D8CFC0] dark:border-[#2A3B34] bg-[#FAF8F4] dark:bg-[#111815] px-3 text-sm font-mono-tabular"
                     />
                   </div>
 
@@ -303,19 +326,20 @@ export const MemberNutritionCard: React.FC<MemberNutritionCardProps> = ({
                     >
                       Weight (kg)
                     </label>
-                    <input
+                    <NumericInput
                       id={`mem-weight-${member.id}`}
-                      type="number"
+                      value={member.weightKg}
+                      allowDecimal
+                      required
                       min={30}
                       max={220}
-                      value={member.weightKg}
-                      onChange={(e) =>
-                        onChange({
-                          ...member,
-                          weightKg: Math.max(30, Number(e.target.value) || 60),
-                        })
+                      label="weight"
+                      suffix="kg"
+                      placeholder="e.g., 65"
+                      onValueChange={(weightKg) => onChange({ ...member, weightKg })}
+                      onValidityChange={(valid, err) =>
+                        onFieldValidityChange?.(`${member.id}:weight`, valid, err)
                       }
-                      className="w-full min-h-[44px] rounded-xl border border-[#D8CFC0] dark:border-[#2A3B34] bg-[#FAF8F4] dark:bg-[#111815] px-3 text-sm font-mono-tabular"
                     />
                   </div>
 
@@ -383,21 +407,28 @@ export const MemberNutritionCard: React.FC<MemberNutritionCardProps> = ({
                     >
                       Manual Daily Calorie Target (kcal/day)
                     </label>
-                    <input
+                    <NumericInput
                       id={`mem-manual-${member.id}`}
-                      type="number"
+                      value={member.manualTargetKcal}
+                      allowDecimal={false}
+                      required
                       min={900}
                       max={4500}
-                      step={50}
-                      value={member.manualTargetKcal}
-                      onChange={(e) =>
+                      label="daily calorie target"
+                      suffix="kcal"
+                      placeholder="e.g., 2000"
+                      className="w-48"
+                      inputClassName="font-semibold"
+                      onValueChange={(kcal) =>
                         onChange({
                           ...member,
                           calorieMode: 'manual',
-                          manualTargetKcal: Math.max(900, Number(e.target.value) || 1800),
+                          manualTargetKcal: kcal,
                         })
                       }
-                      className="w-40 min-h-[44px] rounded-xl border border-[#D8CFC0] dark:border-[#2A3B34] bg-[#FAF8F4] dark:bg-[#111815] px-3 text-sm font-mono-tabular font-semibold"
+                      onValidityChange={(valid, err) =>
+                        onFieldValidityChange?.(`${member.id}:manualKcal`, valid, err)
+                      }
                     />
                   </div>
                   <p className="text-xs text-[#535E58] dark:text-[#A6B5AE] pb-2">
@@ -453,37 +484,94 @@ export const MemberNutritionCard: React.FC<MemberNutritionCardProps> = ({
               </div>
             </div>
 
-            <div>
-              <p className="text-xs font-semibold text-[#1E2421] dark:text-[#F2EFE9] mb-1.5">
+            <div className="space-y-3">
+              <p className="text-xs font-semibold text-[#1E2421] dark:text-[#F2EFE9]">
                 {member.label}&apos;s Dietary Preferences
               </p>
-              <div className="flex flex-wrap gap-1.5">
-                {DIETARY_PREFS_LIST.map((d) => {
-                  const active = (member.dietaryPrefs ?? []).includes(d.id);
-                  return (
-                    <button
-                      key={d.id}
-                      type="button"
-                      onClick={() =>
-                        onChange({
-                          ...member,
-                          dietaryPrefs: active
-                            ? member.dietaryPrefs.filter((x) => x !== d.id)
-                            : [...(member.dietaryPrefs ?? []), d.id as DietaryPrefId],
-                        })
-                      }
-                      aria-pressed={active}
-                      className={`min-h-[38px] px-2.5 rounded-lg border text-xs font-medium transition-colors ${
-                        active
-                          ? 'border-[#1B4D3E] bg-[#1B4D3E] text-[#FAF8F4] dark:border-[#2B7A5C] dark:bg-[#2B7A5C]'
-                          : 'border-[#D8CFC0] dark:border-[#2A3B34] text-[#535E58] dark:text-[#A6B5AE]'
-                      }`}
+              {(['eating_style', 'nutrition_goal', 'food_exclusion'] as DietaryPrefCategory[]).map(
+                (cat) => (
+                  <div key={cat} className="space-y-1.5">
+                    <p className="text-[11px] font-medium text-[#535E58] dark:text-[#A6B5AE]">
+                      {DIETARY_CATEGORY_LABELS[cat].en}
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {DIETARY_PREFS_LIST.filter((d) => d.category === cat).map((d) => {
+                        const active = (member.dietaryPrefs ?? []).includes(d.id);
+                        return (
+                          <button
+                            key={d.id}
+                            type="button"
+                            onClick={() =>
+                              onChange({
+                                ...member,
+                                dietaryPrefs: active
+                                  ? member.dietaryPrefs.filter((x) => x !== d.id)
+                                  : [...(member.dietaryPrefs ?? []), d.id as DietaryPrefId],
+                              })
+                            }
+                            aria-pressed={active}
+                            className={`min-h-[36px] px-2.5 rounded-lg border text-xs font-medium transition-colors ${
+                              active
+                                ? 'border-[#1B4D3E] bg-[#1B4D3E] text-[#FAF8F4] dark:border-[#2B7A5C] dark:bg-[#2B7A5C]'
+                                : 'border-[#D8CFC0] dark:border-[#2A3B34] text-[#535E58] dark:text-[#A6B5AE]'
+                            }`}
+                          >
+                            {d.labelEn}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )
+              )}
+
+              {(member.dietaryPrefs ?? []).includes('keto') && (
+                <div className="rounded-xl border border-[#E4DDD0] dark:border-[#2A3B34] bg-[#FAF8F4] dark:bg-[#111815] p-3 flex flex-wrap items-end gap-3">
+                  <div className="w-44">
+                    <label
+                      htmlFor={`mem-keto-${member.id}`}
+                      className="block text-[11px] font-medium text-[#535E58] dark:text-[#A6B5AE] mb-1"
                     >
-                      {d.labelEn}
-                    </button>
-                  );
-                })}
-              </div>
+                      Keto daily carb target
+                    </label>
+                    <NumericInput
+                      id={`mem-keto-${member.id}`}
+                      value={member.ketoMaxCarbsPerDayG ?? 25}
+                      allowDecimal={false}
+                      required
+                      min={10}
+                      max={60}
+                      label="keto carb target"
+                      suffix="g/day"
+                      inputClassName="pr-14 font-semibold"
+                      onValueChange={(ketoMaxCarbsPerDayG) =>
+                        onChange({ ...member, ketoMaxCarbsPerDayG })
+                      }
+                      onValidityChange={(valid, err) =>
+                        onFieldValidityChange?.(`${member.id}:ketoCarbs`, valid, err)
+                      }
+                    />
+                  </div>
+                  <p className="text-[11px] text-[#535E58] dark:text-[#A6B5AE] flex-1 min-w-[180px]">
+                    Applies stricter carb limits to meals {member.label} attends.
+                  </p>
+                </div>
+              )}
+
+              {detectDietaryConflicts(member.dietaryPrefs ?? []).map((c, idx) => (
+                <div
+                  key={idx}
+                  role="alert"
+                  className={`flex items-start gap-2 rounded-xl border p-2.5 text-xs ${
+                    c.severity === 'conflict'
+                      ? 'border-red-500/40 bg-red-50 dark:bg-red-950/30 text-red-900 dark:text-red-200'
+                      : 'border-amber-500/40 bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200'
+                  }`}
+                >
+                  <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
+                  <span>{c.message}</span>
+                </div>
+              ))}
             </div>
 
             <div>

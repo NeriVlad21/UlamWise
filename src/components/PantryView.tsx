@@ -22,6 +22,7 @@ import type { Translations } from '../lib/i18n';
 import { formatPhp } from '../lib/pricing';
 import { QUICK_PANTRY_CHIPS } from '../lib/storage';
 import { DishIllustration } from './DishIllustration';
+import { NumericInput } from './NumericInput';
 
 interface PantryViewProps {
   profile: UserProfile;
@@ -56,7 +57,8 @@ export const PantryView: React.FC<PantryViewProps> = ({
   // Inventory state
   const [searchQuery, setSearchQuery] = useState('');
   const [newName, setNewName] = useState('');
-  const [newQty, setNewQty] = useState('');
+  const [newQty, setNewQty] = useState<number | undefined>(undefined);
+  const [newQtySyncKey, setNewQtySyncKey] = useState(0);
   const [newUnit, setNewUnit] = useState<'g' | 'ml' | 'pc' | 'kg' | 'L'>('g');
   const [newSufficient, setNewSufficient] = useState(true);
 
@@ -127,18 +129,21 @@ export const PantryView: React.FC<PantryViewProps> = ({
     const trimmed = newName.trim();
     if (!trimmed) return;
     const matched = matchIngredientByName(trimmed, dataset);
-    const qtyNum = Number(newQty);
     const item: PantryItem = {
       id: `p-${Date.now()}`,
       ingredientId: matched?.ingredient_id,
       name: matched ? `${matched.name_fil} (${matched.name_en})` : trimmed,
-      quantity: !newSufficient && Number.isFinite(qtyNum) && qtyNum > 0 ? qtyNum : undefined,
+      quantity:
+        !newSufficient && newQty !== undefined && Number.isFinite(newQty) && newQty > 0
+          ? newQty
+          : undefined,
       unit: newUnit,
       sufficient: newSufficient,
     };
     onUpdatePantry([...profile.pantry, item]);
     setNewName('');
-    setNewQty('');
+    setNewQty(undefined);
+    setNewQtySyncKey((k) => k + 1);
   };
 
   const handleToggleItemSufficient = (id: string) => {
@@ -354,14 +359,19 @@ export const PantryView: React.FC<PantryViewProps> = ({
 
                 {!newSufficient && (
                   <div className="flex gap-2">
-                    <input
-                      type="number"
-                      min={1}
+                    <NumericInput
                       value={newQty}
-                      onChange={(e) => setNewQty(e.target.value)}
-                      placeholder="Qty"
-                      aria-label="Quantity on hand"
-                      className="flex-1 min-h-[44px] rounded-xl border border-[#D8CFC0] dark:border-[#2A3B34] bg-[#FAF8F4] dark:bg-[#111815] px-3 text-sm tabular-nums"
+                      allowDecimal
+                      required={false}
+                      min={0.1}
+                      max={50000}
+                      label="quantity"
+                      placeholder="Qty (e.g., 250 or 0.5)"
+                      ariaLabel="Quantity on hand"
+                      className="flex-1"
+                      externalSyncKey={newQtySyncKey}
+                      onValueChange={(qty) => setNewQty(qty)}
+                      onEmptyChange={() => setNewQty(undefined)}
                     />
                     <select
                       value={newUnit}
