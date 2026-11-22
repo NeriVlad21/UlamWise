@@ -1,0 +1,83 @@
+province,region_key,cuisine_zone,coastal_profile
+Ilocos Norte,r1,ilocano,coastal
+Ilocos Sur,r1,ilocano,coastal
+La Union,r1,ilocano,coastal
+Pangasinan,r1,pangasinense,coastal
+Abra,car,cordilleran,inland
+Apayao,car,cordilleran,inland
+Benguet,car,cordilleran,inland
+Ifugao,car,cordilleran,inland
+Kalinga,car,cordilleran,inland
+Mountain Province,car,cordilleran,inland
+Batanes,r2,ilocano,coastal
+Cagayan,r2,ilocano,coastal
+Isabela,r2,ilocano,inland
+Nueva Vizcaya,r2,ilocano,inland
+Quirino,r2,ilocano,inland
+Aurora,r3,tagalog,coastal
+Bataan,r3,tagalog,coastal
+Bulacan,r3,tagalog,coastal
+Nueva Ecija,r3,tagalog,inland
+Pampanga,r3,kapampangan,inland
+Tarlac,r3,kapampangan,inland
+Zambales,r3,ilocano,coastal
+Batangas,r4a,tagalog,coastal
+Cavite,r4a,tagalog,coastal
+Laguna,r4a,tagalog,inland
+Quezon,r4a,tagalog,coastal
+Rizal,r4a,tagalog,inland
+Marinduque,mimaropa,mimaropa,coastal
+Occidental Mindoro,mimaropa,mimaropa,coastal
+Oriental Mindoro,mimaropa,mimaropa,coastal
+Palawan,mimaropa,mimaropa,coastal
+Romblon,mimaropa,mimaropa,coastal
+Albay,r5,bicolano,coastal
+Camarines Norte,r5,bicolano,coastal
+Camarines Sur,r5,bicolano,coastal
+Catanduanes,r5,bicolano,coastal
+Masbate,r5,bicolano,coastal
+Sorsogon,r5,bicolano,coastal
+Aklan,r6,ilonggo,coastal
+Antique,r6,ilonggo,coastal
+Capiz,r6,ilonggo,coastal
+Guimaras,r6,ilonggo,coastal
+Iloilo,r6,ilonggo,coastal
+Negros Occidental,nir,ilonggo,coastal
+Negros Oriental,nir,cebuano,coastal
+Siquijor,nir,cebuano,coastal
+Bohol,r7,cebuano,coastal
+Cebu,r7,cebuano,coastal
+Biliran,r8,waray,coastal
+Eastern Samar,r8,waray,coastal
+Leyte,r8,waray,coastal
+Northern Samar,r8,waray,coastal
+Samar,r8,waray,coastal
+Southern Leyte,r8,waray,coastal
+Zamboanga del Norte,r9,chavacano,coastal
+Zamboanga del Sur,r9,chavacano,coastal
+Zamboanga Sibugay,r9,chavacano,coastal
+Bukidnon,r10,cebuano,inland
+Camiguin,r10,cebuano,coastal
+Lanao del Norte,r10,cebuano,coastal
+Misamis Occidental,r10,cebuano,coastal
+Misamis Oriental,r10,cebuano,coastal
+Davao de Oro,r11,cebuano,inland
+Davao del Norte,r11,cebuano,coastal
+Davao del Sur,r11,cebuano,coastal
+Davao Occidental,r11,cebuano,coastal
+Davao Oriental,r11,cebuano,coastal
+Cotabato,r12,mindanao_general,inland
+Sarangani,r12,mindanao_general,coastal
+South Cotabato,r12,mindanao_general,inland
+Sultan Kudarat,r12,mindanao_general,coastal
+Agusan del Norte,r13,cebuano,coastal
+Agusan del Sur,r13,cebuano,inland
+Dinagat Islands,r13,cebuano,coastal
+Surigao del Norte,r13,cebuano,coastal
+Surigao del Sur,r13,cebuano,coastal
+Basilan,barmm,mindanao_muslim,coastal
+Lanao del Sur,barmm,mindanao_muslim,inland
+Maguindanao del Norte,barmm,mindanao_muslim,inland
+Maguindanao del Sur,barmm,mindanao_muslim,inland
+Sulu,barmm,mindanao_muslim,coastal
+Tawi-Tawi,barmm,mindanao_muslim,coastal

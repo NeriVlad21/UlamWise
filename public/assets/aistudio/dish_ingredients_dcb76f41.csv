@@ -1,0 +1,702 @@
+dish_id,ingredient_id,ingredient_name,qty_for_base_servings,unit,role
+tapsilog,beef_sirloin,Beef sirloin / tapa cut,400,g,main
+tapsilog,soy_sauce,Soy sauce,50,ml,pantry_staple
+tapsilog,vinegar,Vinegar,30,ml,pantry_staple
+tapsilog,calamansi,Calamansi,30,g,main
+tapsilog,garlic,Garlic,20,g,pantry_staple
+tapsilog,sugar_brown,Brown sugar,15,g,pantry_staple
+tapsilog,black_pepper,Black pepper,2,g,pantry_staple
+tapsilog,egg,Chicken egg,4,pc,main
+tapsilog,cooking_oil,Cooking oil,40,ml,pantry_staple
+tosilog,tocino,Pork tocino,400,g,main
+tosilog,egg,Chicken egg,4,pc,main
+tosilog,garlic,Garlic,15,g,pantry_staple
+tosilog,cooking_oil,Cooking oil,40,ml,pantry_staple
+longsilog,longganisa,Longganisa,400,g,main
+longsilog,egg,Chicken egg,4,pc,main
+longsilog,garlic,Garlic,15,g,pantry_staple
+longsilog,cooking_oil,Cooking oil,30,ml,pantry_staple
+hotsilog,hotdog,Hotdog,400,g,main
+hotsilog,egg,Chicken egg,4,pc,main
+hotsilog,garlic,Garlic,15,g,pantry_staple
+hotsilog,cooking_oil,Cooking oil,30,ml,pantry_staple
+spamsilog,luncheon_meat,Luncheon meat,340,g,main
+spamsilog,egg,Chicken egg,4,pc,main
+spamsilog,garlic,Garlic,15,g,pantry_staple
+spamsilog,cooking_oil,Cooking oil,30,ml,pantry_staple
+cornsilog,corned_beef,Corned beef (canned),300,g,main
+cornsilog,potato,Potato,150,g,main
+cornsilog,onion,Red onion,50,g,pantry_staple
+cornsilog,garlic,Garlic,15,g,pantry_staple
+cornsilog,egg,Chicken egg,4,pc,main
+cornsilog,cooking_oil,Cooking oil,30,ml,pantry_staple
+dangsilog,bangus,Milkfish,600,g,main
+dangsilog,vinegar,Vinegar,60,ml,pantry_staple
+dangsilog,garlic,Garlic,20,g,pantry_staple
+dangsilog,black_pepper,Black pepper,2,g,pantry_staple
+dangsilog,salt,Salt,3,g,pantry_staple
+dangsilog,egg,Chicken egg,4,pc,main
+dangsilog,cooking_oil,Cooking oil,60,ml,pantry_staple
+tuyo_itlog,tuyo,Dried herring,150,g,main
+tuyo_itlog,salted_egg,Salted duck egg,4,pc,main
+tuyo_itlog,tomato,Tomato,200,g,main
+tuyo_itlog,onion,Red onion,60,g,pantry_staple
+tuyo_itlog,vinegar,Vinegar,20,ml,pantry_staple
+tuyo_itlog,cooking_oil,Cooking oil,30,ml,pantry_staple
+ginisang_sardinas,sardines_tomato,Sardines in tomato sauce,310,g,main
+ginisang_sardinas,onion,Red onion,60,g,pantry_staple
+ginisang_sardinas,garlic,Garlic,10,g,pantry_staple
+ginisang_sardinas,tomato,Tomato,100,g,main
+ginisang_sardinas,egg,Chicken egg,2,pc,main
+ginisang_sardinas,cooking_oil,Cooking oil,20,ml,pantry_staple
+champorado,malagkit,Glutinous rice,200,g,main
+champorado,tablea,Tablea (cacao tablets),80,g,main
+champorado,sugar_brown,Brown sugar,60,g,pantry_staple
+champorado,evap_milk,Evaporated milk,100,ml,main
+champorado,tuyo,Dried herring,80,g,optional
+arroz_caldo,malagkit,Glutinous rice,60,g,main
+arroz_caldo,rice_raw,"Rice (well-milled, raw)",100,g,main
+arroz_caldo,chicken_cutup,Whole chicken cut-up,500,g,main
+arroz_caldo,ginger,Ginger,40,g,pantry_staple
+arroz_caldo,garlic,Garlic,20,g,pantry_staple
+arroz_caldo,onion,Red onion,60,g,pantry_staple
+arroz_caldo,fish_sauce,Fish sauce,30,ml,pantry_staple
+arroz_caldo,black_pepper,Black pepper,2,g,pantry_staple
+arroz_caldo,spring_onion,Spring onion,20,g,main
+arroz_caldo,egg,Chicken egg,2,pc,optional
+arroz_caldo,cooking_oil,Cooking oil,30,ml,pantry_staple
+arroz_caldo,calamansi,Calamansi,30,g,optional
+pandesal_itlog,pandesal,Pandesal,12,pc,main
+pandesal_itlog,egg,Chicken egg,6,pc,main
+pandesal_itlog,tomato,Tomato,100,g,main
+pandesal_itlog,onion,Red onion,30,g,pantry_staple
+pandesal_itlog,cooking_oil,Cooking oil,20,ml,pantry_staple
+pandesal_itlog,margarine,Margarine,20,g,pantry_staple
+tortang_talong,talong,Eggplant,500,g,main
+tortang_talong,egg,Chicken egg,4,pc,main
+tortang_talong,onion,Red onion,40,g,pantry_staple
+tortang_talong,cooking_oil,Cooking oil,60,ml,pantry_staple
+tortang_talong,salt,Salt,3,g,pantry_staple
+tortang_giniling,pork_ground,Ground pork,250,g,main
+tortang_giniling,egg,Chicken egg,5,pc,main
+tortang_giniling,carrot,Carrot,60,g,main
+tortang_giniling,onion,Red onion,50,g,pantry_staple
+tortang_giniling,garlic,Garlic,10,g,pantry_staple
+tortang_giniling,cooking_oil,Cooking oil,50,ml,pantry_staple
+tortang_giniling,soy_sauce,Soy sauce,15,ml,pantry_staple
+ampalaya_itlog,ampalaya,Bitter melon,300,g,main
+ampalaya_itlog,egg,Chicken egg,3,pc,main
+ampalaya_itlog,tomato,Tomato,100,g,main
+ampalaya_itlog,onion,Red onion,60,g,pantry_staple
+ampalaya_itlog,garlic,Garlic,10,g,pantry_staple
+ampalaya_itlog,cooking_oil,Cooking oil,30,ml,pantry_staple
+ampalaya_itlog,salt,Salt,2,g,pantry_staple
+chicken_adobo,chicken_cutup,Whole chicken cut-up,800,g,main
+chicken_adobo,soy_sauce,Soy sauce,80,ml,pantry_staple
+chicken_adobo,vinegar,Vinegar,80,ml,pantry_staple
+chicken_adobo,garlic,Garlic,25,g,pantry_staple
+chicken_adobo,bay_leaf,Bay leaf,1,g,pantry_staple
+chicken_adobo,black_pepper,Black pepper,3,g,pantry_staple
+chicken_adobo,sugar_brown,Brown sugar,10,g,pantry_staple
+chicken_adobo,cooking_oil,Cooking oil,30,ml,pantry_staple
+pork_adobo,pork_shoulder,Pork shoulder (kasim),600,g,main
+pork_adobo,soy_sauce,Soy sauce,80,ml,pantry_staple
+pork_adobo,vinegar,Vinegar,80,ml,pantry_staple
+pork_adobo,garlic,Garlic,25,g,pantry_staple
+pork_adobo,bay_leaf,Bay leaf,1,g,pantry_staple
+pork_adobo,black_pepper,Black pepper,3,g,pantry_staple
+pork_adobo,sugar_brown,Brown sugar,10,g,pantry_staple
+pork_adobo,cooking_oil,Cooking oil,20,ml,pantry_staple
+adobong_sitaw,sitaw,String beans,400,g,main
+adobong_sitaw,pork_shoulder,Pork shoulder (kasim),150,g,optional
+adobong_sitaw,soy_sauce,Soy sauce,40,ml,pantry_staple
+adobong_sitaw,vinegar,Vinegar,40,ml,pantry_staple
+adobong_sitaw,garlic,Garlic,15,g,pantry_staple
+adobong_sitaw,onion,Red onion,50,g,pantry_staple
+adobong_sitaw,cooking_oil,Cooking oil,20,ml,pantry_staple
+adobong_sitaw,black_pepper,Black pepper,2,g,pantry_staple
+adobong_kangkong,kangkong,Water spinach,500,g,main
+adobong_kangkong,soy_sauce,Soy sauce,50,ml,pantry_staple
+adobong_kangkong,vinegar,Vinegar,40,ml,pantry_staple
+adobong_kangkong,garlic,Garlic,25,g,pantry_staple
+adobong_kangkong,cooking_oil,Cooking oil,30,ml,pantry_staple
+adobong_kangkong,black_pepper,Black pepper,2,g,pantry_staple
+adobong_kangkong,sugar_brown,Brown sugar,5,g,pantry_staple
+adobong_pusit,pusit,Squid,500,g,main
+adobong_pusit,soy_sauce,Soy sauce,30,ml,pantry_staple
+adobong_pusit,vinegar,Vinegar,60,ml,pantry_staple
+adobong_pusit,garlic,Garlic,20,g,pantry_staple
+adobong_pusit,onion,Red onion,80,g,pantry_staple
+adobong_pusit,tomato,Tomato,80,g,main
+adobong_pusit,green_chili,Long green chili,20,g,main
+adobong_pusit,black_pepper,Black pepper,2,g,pantry_staple
+adobong_pusit,cooking_oil,Cooking oil,30,ml,pantry_staple
+chicken_tinola,chicken_cutup,Whole chicken cut-up,800,g,main
+chicken_tinola,ginger,Ginger,50,g,pantry_staple
+chicken_tinola,garlic,Garlic,15,g,pantry_staple
+chicken_tinola,onion,Red onion,60,g,pantry_staple
+chicken_tinola,papaya_hilaw,Green papaya,300,g,main
+chicken_tinola,malunggay,Moringa leaves,60,g,main
+chicken_tinola,fish_sauce,Fish sauce,30,ml,pantry_staple
+chicken_tinola,cooking_oil,Cooking oil,20,ml,pantry_staple
+chicken_tinola,black_pepper,Black pepper,2,g,pantry_staple
+sinigang_baboy,pork_ribs,Pork ribs,700,g,main
+sinigang_baboy,sinigang_mix,Sinigang sa sampalok mix,2,pc,main
+sinigang_baboy,tomato,Tomato,150,g,main
+sinigang_baboy,onion,Red onion,80,g,pantry_staple
+sinigang_baboy,gabi,Taro root,150,g,main
+sinigang_baboy,kangkong,Water spinach,200,g,main
+sinigang_baboy,labanos,Radish,150,g,main
+sinigang_baboy,sitaw,String beans,150,g,main
+sinigang_baboy,green_chili,Long green chili,20,g,main
+sinigang_baboy,fish_sauce,Fish sauce,30,ml,pantry_staple
+sinigang_hipon,hipon,Shrimp,500,g,main
+sinigang_hipon,sinigang_mix,Sinigang sa sampalok mix,2,pc,main
+sinigang_hipon,tomato,Tomato,150,g,main
+sinigang_hipon,onion,Red onion,80,g,pantry_staple
+sinigang_hipon,kangkong,Water spinach,200,g,main
+sinigang_hipon,labanos,Radish,100,g,main
+sinigang_hipon,sitaw,String beans,100,g,main
+sinigang_hipon,green_chili,Long green chili,20,g,main
+sinigang_hipon,fish_sauce,Fish sauce,20,ml,pantry_staple
+sinigang_bangus,bangus,Milkfish,700,g,main
+sinigang_bangus,sinigang_mix,Sinigang sa sampalok mix,2,pc,main
+sinigang_bangus,tomato,Tomato,150,g,main
+sinigang_bangus,onion,Red onion,80,g,pantry_staple
+sinigang_bangus,kangkong,Water spinach,200,g,main
+sinigang_bangus,okra,Okra,100,g,main
+sinigang_bangus,sitaw,String beans,100,g,main
+sinigang_bangus,labanos,Radish,100,g,main
+sinigang_bangus,green_chili,Long green chili,20,g,main
+nilagang_baboy,pork_ribs,Pork ribs,700,g,main
+nilagang_baboy,potato,Potato,300,g,main
+nilagang_baboy,repolyo,Cabbage,300,g,main
+nilagang_baboy,saging_saba,Saba banana,200,g,main
+nilagang_baboy,pechay,Bok choy,150,g,main
+nilagang_baboy,onion,Red onion,60,g,pantry_staple
+nilagang_baboy,black_pepper,Black pepper,2,g,pantry_staple
+nilagang_baboy,fish_sauce,Fish sauce,20,ml,pantry_staple
+nilagang_baka,beef_brisket,Beef brisket,600,g,main
+nilagang_baka,potato,Potato,300,g,main
+nilagang_baka,repolyo,Cabbage,300,g,main
+nilagang_baka,sweet_corn,Sweet corn,200,g,main
+nilagang_baka,pechay,Bok choy,150,g,main
+nilagang_baka,onion,Red onion,60,g,pantry_staple
+nilagang_baka,fish_sauce,Fish sauce,20,ml,pantry_staple
+nilagang_baka,black_pepper,Black pepper,2,g,pantry_staple
+bulalo,beef_shank,Beef shank with marrow,1000,g,main
+bulalo,sweet_corn,Sweet corn,250,g,main
+bulalo,repolyo,Cabbage,300,g,main
+bulalo,pechay,Bok choy,200,g,main
+bulalo,onion,Red onion,60,g,pantry_staple
+bulalo,fish_sauce,Fish sauce,30,ml,pantry_staple
+bulalo,black_pepper,Black pepper,3,g,pantry_staple
+bulalo,spring_onion,Spring onion,20,g,main
+pinakbet,kalabasa,Squash,300,g,main
+pinakbet,talong,Eggplant,200,g,main
+pinakbet,okra,Okra,150,g,main
+pinakbet,sitaw,String beans,150,g,main
+pinakbet,ampalaya,Bitter melon,150,g,main
+pinakbet,tomato,Tomato,150,g,main
+pinakbet,onion,Red onion,60,g,pantry_staple
+pinakbet,garlic,Garlic,15,g,pantry_staple
+pinakbet,ginger,Ginger,20,g,pantry_staple
+pinakbet,bagoong_isda,Fermented fish paste,40,g,main
+pinakbet,pork_belly,Pork belly,150,g,optional
+pinakbet,cooking_oil,Cooking oil,20,ml,pantry_staple
+dinengdeng,bangus,Milkfish,400,g,main
+dinengdeng,bagoong_isda,Fermented fish paste,60,g,main
+dinengdeng,malunggay,Moringa leaves,80,g,main
+dinengdeng,kalabasa,Squash,250,g,main
+dinengdeng,sitaw,String beans,150,g,main
+dinengdeng,okra,Okra,100,g,main
+dinengdeng,talong,Eggplant,200,g,main
+dinengdeng,ampalaya,Bitter melon,100,g,main
+dinengdeng,tomato,Tomato,100,g,main
+dinengdeng,onion,Red onion,60,g,pantry_staple
+dinengdeng,ginger,Ginger,20,g,pantry_staple
+bagnet,pork_belly,Pork belly,500,g,main
+bagnet,salt,Salt,15,g,pantry_staple
+bagnet,black_pepper,Black pepper,3,g,pantry_staple
+bagnet,bay_leaf,Bay leaf,2,g,pantry_staple
+bagnet,garlic,Garlic,20,g,pantry_staple
+bagnet,tomato,Tomato,200,g,main
+bagnet,onion,Red onion,50,g,pantry_staple
+bagnet,vinegar,Vinegar,50,ml,pantry_staple
+bagnet,cooking_oil,Cooking oil,40,ml,pantry_staple
+inihaw_liempo,pork_belly,Pork belly,500,g,main
+inihaw_liempo,soy_sauce,Soy sauce,40,ml,pantry_staple
+inihaw_liempo,vinegar,Vinegar,40,ml,pantry_staple
+inihaw_liempo,calamansi,Calamansi,40,g,main
+inihaw_liempo,garlic,Garlic,20,g,pantry_staple
+inihaw_liempo,sugar_brown,Brown sugar,15,g,pantry_staple
+inihaw_liempo,black_pepper,Black pepper,2,g,pantry_staple
+chicken_inasal,chicken_thigh,Chicken thigh/leg,900,g,main
+chicken_inasal,vinegar,Vinegar,80,ml,pantry_staple
+chicken_inasal,calamansi,Calamansi,50,g,main
+chicken_inasal,lemongrass,Lemongrass,40,g,main
+chicken_inasal,ginger,Ginger,30,g,pantry_staple
+chicken_inasal,garlic,Garlic,30,g,pantry_staple
+chicken_inasal,annatto,Annatto powder,5,g,main
+chicken_inasal,cooking_oil,Cooking oil,40,ml,pantry_staple
+chicken_inasal,salt,Salt,5,g,pantry_staple
+chicken_inasal,black_pepper,Black pepper,2,g,pantry_staple
+chicken_inasal,sugar_white,White sugar,15,g,pantry_staple
+chicken_afritada,chicken_cutup,Whole chicken cut-up,800,g,main
+chicken_afritada,tomato_sauce,Tomato sauce,150,g,main
+chicken_afritada,potato,Potato,250,g,main
+chicken_afritada,carrot,Carrot,150,g,main
+chicken_afritada,bell_pepper,Bell pepper,100,g,main
+chicken_afritada,onion,Red onion,60,g,pantry_staple
+chicken_afritada,garlic,Garlic,15,g,pantry_staple
+chicken_afritada,fish_sauce,Fish sauce,20,ml,pantry_staple
+chicken_afritada,cooking_oil,Cooking oil,30,ml,pantry_staple
+chicken_afritada,black_pepper,Black pepper,2,g,pantry_staple
+pork_menudo,pork_shoulder,Pork shoulder (kasim),500,g,main
+pork_menudo,pork_liver,Pork liver,150,g,main
+pork_menudo,hotdog,Hotdog,150,g,main
+pork_menudo,potato,Potato,200,g,main
+pork_menudo,carrot,Carrot,150,g,main
+pork_menudo,tomato_sauce,Tomato sauce,100,g,main
+pork_menudo,soy_sauce,Soy sauce,30,ml,pantry_staple
+pork_menudo,onion,Red onion,60,g,pantry_staple
+pork_menudo,garlic,Garlic,15,g,pantry_staple
+pork_menudo,bell_pepper,Bell pepper,80,g,main
+pork_menudo,cooking_oil,Cooking oil,30,ml,pantry_staple
+beef_kaldereta,beef_brisket,Beef brisket,600,g,main
+beef_kaldereta,potato,Potato,250,g,main
+beef_kaldereta,carrot,Carrot,150,g,main
+beef_kaldereta,bell_pepper,Bell pepper,100,g,main
+beef_kaldereta,tomato_sauce,Tomato sauce,150,g,main
+beef_kaldereta,liver_spread,Liver spread,60,g,main
+beef_kaldereta,onion,Red onion,60,g,pantry_staple
+beef_kaldereta,garlic,Garlic,15,g,pantry_staple
+beef_kaldereta,green_chili,Long green chili,20,g,main
+beef_kaldereta,cooking_oil,Cooking oil,40,ml,pantry_staple
+beef_kaldereta,soy_sauce,Soy sauce,20,ml,pantry_staple
+beef_kaldereta,cheese,Processed cheese,40,g,main
+kare_kare,beef_brisket,Beef brisket,700,g,main
+kare_kare,peanut_butter,Peanut butter,100,g,main
+kare_kare,talong,Eggplant,200,g,main
+kare_kare,sitaw,String beans,200,g,main
+kare_kare,pechay,Bok choy,150,g,main
+kare_kare,annatto,Annatto powder,8,g,main
+kare_kare,onion,Red onion,60,g,pantry_staple
+kare_kare,garlic,Garlic,15,g,pantry_staple
+kare_kare,cooking_oil,Cooking oil,30,ml,pantry_staple
+kare_kare,bagoong_alamang,Shrimp paste,60,g,optional
+sisig,pork_face,Pork face/ears (sisig cut),400,g,main
+sisig,chicken_liver,Chicken liver,80,g,main
+sisig,onion,Red onion,100,g,pantry_staple
+sisig,calamansi,Calamansi,60,g,main
+sisig,siling_labuyo,Bird's eye chili,10,g,main
+sisig,green_chili,Long green chili,30,g,main
+sisig,chicharon,Chicharon (pork rind),40,g,optional
+sisig,egg,Chicken egg,2,pc,optional
+sisig,soy_sauce,Soy sauce,30,ml,pantry_staple
+sisig,black_pepper,Black pepper,2,g,pantry_staple
+sisig,cooking_oil,Cooking oil,30,ml,pantry_staple
+lumpiang_shanghai,pork_ground,Ground pork,400,g,main
+lumpiang_shanghai,carrot,Carrot,80,g,main
+lumpiang_shanghai,onion,Red onion,60,g,pantry_staple
+lumpiang_shanghai,garlic,Garlic,15,g,pantry_staple
+lumpiang_shanghai,egg,Chicken egg,1,pc,main
+lumpiang_shanghai,lumpia_wrapper,Lumpia wrapper,24,pc,main
+lumpiang_shanghai,soy_sauce,Soy sauce,15,ml,pantry_staple
+lumpiang_shanghai,black_pepper,Black pepper,2,g,pantry_staple
+lumpiang_shanghai,cooking_oil,Cooking oil,50,ml,pantry_staple
+ginataang_kalabasa_sitaw,kalabasa,Squash,400,g,main
+ginataang_kalabasa_sitaw,sitaw,String beans,250,g,main
+ginataang_kalabasa_sitaw,gata,Coconut milk,400,ml,main
+ginataang_kalabasa_sitaw,pork_shoulder,Pork shoulder (kasim),150,g,optional
+ginataang_kalabasa_sitaw,garlic,Garlic,15,g,pantry_staple
+ginataang_kalabasa_sitaw,onion,Red onion,60,g,pantry_staple
+ginataang_kalabasa_sitaw,ginger,Ginger,20,g,pantry_staple
+ginataang_kalabasa_sitaw,salt,Salt,3,g,pantry_staple
+laing,dahon_gabi,Taro leaves,150,g,main
+laing,gata,Coconut milk,500,ml,main
+laing,pork_shoulder,Pork shoulder (kasim),150,g,optional
+laing,siling_labuyo,Bird's eye chili,15,g,main
+laing,green_chili,Long green chili,40,g,main
+laing,garlic,Garlic,15,g,pantry_staple
+laing,onion,Red onion,60,g,pantry_staple
+laing,ginger,Ginger,30,g,pantry_staple
+laing,bagoong_alamang,Shrimp paste,30,g,optional
+laing,cooking_oil,Cooking oil,20,ml,pantry_staple
+laing,salt,Salt,3,g,pantry_staple
+bicol_express,pork_shoulder,Pork shoulder (kasim),500,g,main
+bicol_express,gata,Coconut milk,300,ml,main
+bicol_express,green_chili,Long green chili,80,g,main
+bicol_express,siling_labuyo,Bird's eye chili,15,g,main
+bicol_express,onion,Red onion,80,g,pantry_staple
+bicol_express,garlic,Garlic,20,g,pantry_staple
+bicol_express,ginger,Ginger,20,g,pantry_staple
+bicol_express,bagoong_alamang,Shrimp paste,40,g,pantry_staple
+bicol_express,cooking_oil,Cooking oil,20,ml,pantry_staple
+ginataang_langka,langka_hilaw,Young jackfruit,500,g,main
+ginataang_langka,gata,Coconut milk,400,ml,main
+ginataang_langka,pork_shoulder,Pork shoulder (kasim),150,g,optional
+ginataang_langka,garlic,Garlic,15,g,pantry_staple
+ginataang_langka,onion,Red onion,60,g,pantry_staple
+ginataang_langka,ginger,Ginger,20,g,pantry_staple
+ginataang_langka,siling_labuyo,Bird's eye chili,5,g,main
+ginataang_langka,salt,Salt,3,g,pantry_staple
+kinilaw_tuna,tuna_fresh,Fresh tuna,500,g,main
+kinilaw_tuna,vinegar,Vinegar,100,ml,pantry_staple
+kinilaw_tuna,calamansi,Calamansi,60,g,main
+kinilaw_tuna,ginger,Ginger,30,g,pantry_staple
+kinilaw_tuna,onion,Red onion,80,g,pantry_staple
+kinilaw_tuna,siling_labuyo,Bird's eye chili,10,g,main
+kinilaw_tuna,salt,Salt,3,g,pantry_staple
+kinilaw_tuna,black_pepper,Black pepper,1,g,pantry_staple
+humba,pork_belly,Pork belly,300,g,main
+humba,pork_shoulder,Pork shoulder (kasim),300,g,main
+humba,soy_sauce,Soy sauce,80,ml,pantry_staple
+humba,vinegar,Vinegar,60,ml,pantry_staple
+humba,sugar_brown,Brown sugar,40,g,pantry_staple
+humba,garlic,Garlic,25,g,pantry_staple
+humba,bay_leaf,Bay leaf,2,g,pantry_staple
+humba,black_pepper,Black pepper,3,g,pantry_staple
+humba,saging_saba,Saba banana,200,g,main
+humba,onion,Red onion,60,g,pantry_staple
+humba,cooking_oil,Cooking oil,20,ml,pantry_staple
+kbl,kadyos,Pigeon peas,150,g,main
+kbl,pork_ribs,Pork ribs,500,g,main
+kbl,langka_hilaw,Young jackfruit,300,g,main
+kbl,sampalok,Tamarind (fresh/pulp),60,g,main
+kbl,lemongrass,Lemongrass,30,g,main
+kbl,onion,Red onion,60,g,pantry_staple
+kbl,ginger,Ginger,30,g,pantry_staple
+kbl,tomato,Tomato,100,g,main
+kbl,green_chili,Long green chili,20,g,main
+kbl,fish_sauce,Fish sauce,20,ml,pantry_staple
+la_paz_batchoy,miki,Fresh egg noodles,400,g,main
+la_paz_batchoy,pork_shoulder,Pork shoulder (kasim),250,g,main
+la_paz_batchoy,pork_liver,Pork liver,80,g,main
+la_paz_batchoy,chicharon,Chicharon (pork rind),40,g,optional
+la_paz_batchoy,garlic,Garlic,20,g,pantry_staple
+la_paz_batchoy,onion,Red onion,80,g,pantry_staple
+la_paz_batchoy,ginger,Ginger,20,g,pantry_staple
+la_paz_batchoy,bagoong_alamang,Shrimp paste,20,g,pantry_staple
+la_paz_batchoy,fish_sauce,Fish sauce,30,ml,pantry_staple
+la_paz_batchoy,egg,Chicken egg,2,pc,optional
+la_paz_batchoy,spring_onion,Spring onion,30,g,main
+la_paz_batchoy,cooking_oil,Cooking oil,30,ml,pantry_staple
+la_paz_batchoy,black_pepper,Black pepper,2,g,pantry_staple
+pancit_canton,pancit_canton,Pancit canton noodles (dry),400,g,main
+pancit_canton,chicken_breast,Chicken breast,200,g,optional
+pancit_canton,carrot,Carrot,100,g,main
+pancit_canton,repolyo,Cabbage,200,g,main
+pancit_canton,baguio_beans,Green beans,100,g,main
+pancit_canton,onion,Red onion,60,g,pantry_staple
+pancit_canton,garlic,Garlic,15,g,pantry_staple
+pancit_canton,soy_sauce,Soy sauce,60,ml,pantry_staple
+pancit_canton,oyster_sauce,Oyster sauce,30,ml,optional
+pancit_canton,cooking_oil,Cooking oil,40,ml,pantry_staple
+pancit_canton,calamansi,Calamansi,40,g,optional
+pancit_bihon,bihon,Rice vermicelli,300,g,main
+pancit_bihon,chicken_breast,Chicken breast,200,g,optional
+pancit_bihon,carrot,Carrot,100,g,main
+pancit_bihon,repolyo,Cabbage,200,g,main
+pancit_bihon,baguio_beans,Green beans,100,g,main
+pancit_bihon,onion,Red onion,60,g,pantry_staple
+pancit_bihon,garlic,Garlic,15,g,pantry_staple
+pancit_bihon,soy_sauce,Soy sauce,50,ml,pantry_staple
+pancit_bihon,salt,Salt,3,g,pantry_staple
+pancit_bihon,cooking_oil,Cooking oil,40,ml,pantry_staple
+pancit_bihon,calamansi,Calamansi,40,g,optional
+lomi,miki,Fresh egg noodles,400,g,main
+lomi,pork_shoulder,Pork shoulder (kasim),200,g,main
+lomi,chicken_liver,Chicken liver,100,g,main
+lomi,egg,Chicken egg,3,pc,main
+lomi,cornstarch,Cornstarch,30,g,pantry_staple
+lomi,carrot,Carrot,80,g,main
+lomi,repolyo,Cabbage,150,g,main
+lomi,onion,Red onion,60,g,pantry_staple
+lomi,garlic,Garlic,15,g,pantry_staple
+lomi,soy_sauce,Soy sauce,30,ml,pantry_staple
+lomi,black_pepper,Black pepper,2,g,pantry_staple
+lomi,fish_sauce,Fish sauce,20,ml,pantry_staple
+lomi,spring_onion,Spring onion,20,g,main
+lomi,cooking_oil,Cooking oil,30,ml,pantry_staple
+sopas,macaroni,Elbow macaroni,200,g,main
+sopas,chicken_breast,Chicken breast,250,g,main
+sopas,evap_milk,Evaporated milk,250,ml,main
+sopas,carrot,Carrot,100,g,main
+sopas,repolyo,Cabbage,150,g,main
+sopas,onion,Red onion,60,g,pantry_staple
+sopas,garlic,Garlic,10,g,pantry_staple
+sopas,hotdog,Hotdog,100,g,optional
+sopas,margarine,Margarine,20,g,pantry_staple
+sopas,black_pepper,Black pepper,1,g,pantry_staple
+sopas,salt,Salt,3,g,pantry_staple
+spaghetti_pinoy,spaghetti,Spaghetti noodles,320,g,main
+spaghetti_pinoy,pork_ground,Ground pork,200,g,main
+spaghetti_pinoy,hotdog,Hotdog,200,g,main
+spaghetti_pinoy,tomato_sauce,Tomato sauce,300,g,main
+spaghetti_pinoy,banana_ketchup,Banana ketchup,100,g,pantry_staple
+spaghetti_pinoy,sugar_white,White sugar,40,g,pantry_staple
+spaghetti_pinoy,onion,Red onion,80,g,pantry_staple
+spaghetti_pinoy,garlic,Garlic,15,g,pantry_staple
+spaghetti_pinoy,cheese,Processed cheese,60,g,main
+spaghetti_pinoy,cooking_oil,Cooking oil,20,ml,pantry_staple
+ginisang_monggo,monggo,Mung beans,200,g,main
+ginisang_monggo,pork_shoulder,Pork shoulder (kasim),100,g,optional
+ginisang_monggo,malunggay,Moringa leaves,80,g,main
+ginisang_monggo,tomato,Tomato,100,g,main
+ginisang_monggo,onion,Red onion,60,g,pantry_staple
+ginisang_monggo,garlic,Garlic,15,g,pantry_staple
+ginisang_monggo,salt,Salt,3,g,pantry_staple
+ginisang_monggo,chicharon,Chicharon (pork rind),30,g,optional
+ginisang_monggo,cooking_oil,Cooking oil,20,ml,pantry_staple
+ginisang_repolyo,repolyo,Cabbage,500,g,main
+ginisang_repolyo,pork_ground,Ground pork,200,g,optional
+ginisang_repolyo,carrot,Carrot,80,g,main
+ginisang_repolyo,onion,Red onion,50,g,pantry_staple
+ginisang_repolyo,garlic,Garlic,10,g,pantry_staple
+ginisang_repolyo,soy_sauce,Soy sauce,20,ml,pantry_staple
+ginisang_repolyo,cooking_oil,Cooking oil,20,ml,pantry_staple
+ginisang_repolyo,black_pepper,Black pepper,1,g,pantry_staple
+ginisang_sayote,sayote,Chayote,500,g,main
+ginisang_sayote,pork_ground,Ground pork,200,g,optional
+ginisang_sayote,onion,Red onion,50,g,pantry_staple
+ginisang_sayote,garlic,Garlic,10,g,pantry_staple
+ginisang_sayote,salt,Salt,3,g,pantry_staple
+ginisang_sayote,cooking_oil,Cooking oil,20,ml,pantry_staple
+ginisang_upo,upo,Bottle gourd,500,g,main
+ginisang_upo,sardines_tomato,Sardines in tomato sauce,155,g,optional
+ginisang_upo,onion,Red onion,50,g,pantry_staple
+ginisang_upo,garlic,Garlic,10,g,pantry_staple
+ginisang_upo,tomato,Tomato,100,g,main
+ginisang_upo,cooking_oil,Cooking oil,20,ml,pantry_staple
+tokwat_baboy,tokwa,Firm tofu,400,g,main
+tokwat_baboy,pork_shoulder,Pork shoulder (kasim),300,g,main
+tokwat_baboy,soy_sauce,Soy sauce,60,ml,pantry_staple
+tokwat_baboy,vinegar,Vinegar,60,ml,pantry_staple
+tokwat_baboy,onion,Red onion,60,g,pantry_staple
+tokwat_baboy,spring_onion,Spring onion,30,g,main
+tokwat_baboy,siling_labuyo,Bird's eye chili,5,g,main
+tokwat_baboy,black_pepper,Black pepper,1,g,pantry_staple
+tokwat_baboy,cooking_oil,Cooking oil,60,ml,pantry_staple
+ensaladang_talong,talong,Eggplant,600,g,main
+ensaladang_talong,tomato,Tomato,200,g,main
+ensaladang_talong,onion,Red onion,80,g,pantry_staple
+ensaladang_talong,vinegar,Vinegar,30,ml,pantry_staple
+ensaladang_talong,salt,Salt,3,g,pantry_staple
+ensaladang_talong,salted_egg,Salted duck egg,2,pc,main
+paksiw_bangus,bangus,Milkfish,700,g,main
+paksiw_bangus,vinegar,Vinegar,100,ml,pantry_staple
+paksiw_bangus,ginger,Ginger,40,g,pantry_staple
+paksiw_bangus,garlic,Garlic,20,g,pantry_staple
+paksiw_bangus,talong,Eggplant,200,g,main
+paksiw_bangus,ampalaya,Bitter melon,150,g,main
+paksiw_bangus,green_chili,Long green chili,20,g,main
+paksiw_bangus,salt,Salt,3,g,pantry_staple
+paksiw_bangus,black_pepper,Black pepper,2,g,pantry_staple
+pritong_galunggong,galunggong,Round scad,700,g,main
+pritong_galunggong,salt,Salt,5,g,pantry_staple
+pritong_galunggong,cooking_oil,Cooking oil,80,ml,pantry_staple
+pritong_galunggong,tomato,Tomato,200,g,main
+pritong_galunggong,onion,Red onion,60,g,pantry_staple
+pritong_galunggong,bagoong_alamang,Shrimp paste,40,g,optional
+pritong_tilapia,tilapia,Tilapia,800,g,main
+pritong_tilapia,salt,Salt,5,g,pantry_staple
+pritong_tilapia,cooking_oil,Cooking oil,80,ml,pantry_staple
+pritong_tilapia,soy_sauce,Soy sauce,40,ml,pantry_staple
+pritong_tilapia,calamansi,Calamansi,40,g,main
+pritong_tilapia,onion,Red onion,40,g,pantry_staple
+giniling_patatas,pork_ground,Ground pork,400,g,main
+giniling_patatas,potato,Potato,300,g,main
+giniling_patatas,carrot,Carrot,150,g,main
+giniling_patatas,tomato_sauce,Tomato sauce,100,g,main
+giniling_patatas,onion,Red onion,60,g,pantry_staple
+giniling_patatas,garlic,Garlic,15,g,pantry_staple
+giniling_patatas,soy_sauce,Soy sauce,20,ml,pantry_staple
+giniling_patatas,cooking_oil,Cooking oil,20,ml,pantry_staple
+giniling_patatas,black_pepper,Black pepper,1,g,pantry_staple
+dinuguan,pork_shoulder,Pork shoulder (kasim),400,g,main
+dinuguan,pork_blood,Pork blood,300,g,main
+dinuguan,vinegar,Vinegar,100,ml,pantry_staple
+dinuguan,garlic,Garlic,20,g,pantry_staple
+dinuguan,onion,Red onion,80,g,pantry_staple
+dinuguan,green_chili,Long green chili,40,g,main
+dinuguan,ginger,Ginger,20,g,pantry_staple
+dinuguan,cooking_oil,Cooking oil,30,ml,pantry_staple
+dinuguan,salt,Salt,3,g,pantry_staple
+dinuguan,black_pepper,Black pepper,2,g,pantry_staple
+chicken_curry,chicken_cutup,Whole chicken cut-up,800,g,main
+chicken_curry,potato,Potato,250,g,main
+chicken_curry,carrot,Carrot,150,g,main
+chicken_curry,bell_pepper,Bell pepper,80,g,main
+chicken_curry,gata,Coconut milk,200,ml,main
+chicken_curry,curry_powder,Curry powder,15,g,main
+chicken_curry,onion,Red onion,60,g,pantry_staple
+chicken_curry,garlic,Garlic,15,g,pantry_staple
+chicken_curry,ginger,Ginger,20,g,pantry_staple
+chicken_curry,fish_sauce,Fish sauce,20,ml,pantry_staple
+chicken_curry,cooking_oil,Cooking oil,30,ml,pantry_staple
+bistek_tagalog,beef_sirloin,Beef sirloin / tapa cut,500,g,main
+bistek_tagalog,soy_sauce,Soy sauce,80,ml,pantry_staple
+bistek_tagalog,calamansi,Calamansi,80,g,main
+bistek_tagalog,onion,Red onion,150,g,pantry_staple
+bistek_tagalog,garlic,Garlic,10,g,pantry_staple
+bistek_tagalog,cooking_oil,Cooking oil,40,ml,pantry_staple
+bistek_tagalog,black_pepper,Black pepper,2,g,pantry_staple
+pininyahang_manok,chicken_cutup,Whole chicken cut-up,800,g,main
+pininyahang_manok,pineapple,Pineapple,300,g,main
+pininyahang_manok,evap_milk,Evaporated milk,200,ml,main
+pininyahang_manok,potato,Potato,200,g,main
+pininyahang_manok,carrot,Carrot,150,g,main
+pininyahang_manok,bell_pepper,Bell pepper,80,g,main
+pininyahang_manok,onion,Red onion,60,g,pantry_staple
+pininyahang_manok,garlic,Garlic,15,g,pantry_staple
+pininyahang_manok,fish_sauce,Fish sauce,20,ml,pantry_staple
+pininyahang_manok,cooking_oil,Cooking oil,30,ml,pantry_staple
+pochero,beef_brisket,Beef brisket,500,g,main
+pochero,saging_saba,Saba banana,300,g,main
+pochero,potato,Potato,250,g,main
+pochero,repolyo,Cabbage,300,g,main
+pochero,pechay,Bok choy,150,g,main
+pochero,tomato_sauce,Tomato sauce,100,g,main
+pochero,onion,Red onion,60,g,pantry_staple
+pochero,garlic,Garlic,15,g,pantry_staple
+pochero,baguio_beans,Green beans,100,g,main
+pochero,fish_sauce,Fish sauce,20,ml,pantry_staple
+pochero,cooking_oil,Cooking oil,20,ml,pantry_staple
+utan_bisaya,kalabasa,Squash,300,g,main
+utan_bisaya,sitaw,String beans,150,g,main
+utan_bisaya,okra,Okra,100,g,main
+utan_bisaya,malunggay,Moringa leaves,60,g,main
+utan_bisaya,talong,Eggplant,150,g,main
+utan_bisaya,tinapa,Smoked fish,80,g,optional
+utan_bisaya,ginger,Ginger,20,g,pantry_staple
+utan_bisaya,onion,Red onion,60,g,pantry_staple
+utan_bisaya,tomato,Tomato,100,g,main
+utan_bisaya,garlic,Garlic,10,g,pantry_staple
+utan_bisaya,salt,Salt,3,g,pantry_staple
+chop_suey,carrot,Carrot,150,g,main
+chop_suey,repolyo,Cabbage,200,g,main
+chop_suey,baguio_beans,Green beans,100,g,main
+chop_suey,bell_pepper,Bell pepper,80,g,main
+chop_suey,pechay,Bok choy,150,g,main
+chop_suey,chicken_breast,Chicken breast,200,g,optional
+chop_suey,oyster_sauce,Oyster sauce,30,ml,optional
+chop_suey,garlic,Garlic,15,g,pantry_staple
+chop_suey,onion,Red onion,60,g,pantry_staple
+chop_suey,cornstarch,Cornstarch,10,g,pantry_staple
+chop_suey,cooking_oil,Cooking oil,30,ml,pantry_staple
+pritong_manok,chicken_cutup,Whole chicken cut-up,900,g,main
+pritong_manok,salt,Salt,8,g,pantry_staple
+pritong_manok,black_pepper,Black pepper,3,g,pantry_staple
+pritong_manok,garlic,Garlic,20,g,pantry_staple
+pritong_manok,calamansi,Calamansi,30,g,main
+pritong_manok,cooking_oil,Cooking oil,60,ml,pantry_staple
+piaparan_manok,chicken_cutup,Whole chicken cut-up,800,g,main
+piaparan_manok,niyog,Grated coconut,200,g,main
+piaparan_manok,turmeric,Fresh turmeric,20,g,main
+piaparan_manok,ginger,Ginger,30,g,pantry_staple
+piaparan_manok,onion,Red onion,80,g,pantry_staple
+piaparan_manok,siling_labuyo,Bird's eye chili,10,g,main
+piaparan_manok,lemongrass,Lemongrass,30,g,main
+piaparan_manok,green_chili,Long green chili,40,g,main
+piaparan_manok,salt,Salt,4,g,pantry_staple
+piaparan_manok,cooking_oil,Cooking oil,20,ml,pantry_staple
+tiyula_itum,beef_shank,Beef shank with marrow,700,g,main
+tiyula_itum,niyog,Grated coconut,150,g,main
+tiyula_itum,ginger,Ginger,40,g,pantry_staple
+tiyula_itum,onion,Red onion,80,g,pantry_staple
+tiyula_itum,lemongrass,Lemongrass,30,g,main
+tiyula_itum,siling_labuyo,Bird's eye chili,10,g,main
+tiyula_itum,turmeric,Fresh turmeric,15,g,main
+tiyula_itum,salt,Salt,4,g,pantry_staple
+tiyula_itum,garlic,Garlic,15,g,pantry_staple
+ginataang_isda,tilapia,Tilapia,700,g,main
+ginataang_isda,gata,Coconut milk,300,ml,main
+ginataang_isda,ginger,Ginger,30,g,pantry_staple
+ginataang_isda,green_chili,Long green chili,40,g,main
+ginataang_isda,onion,Red onion,60,g,pantry_staple
+ginataang_isda,garlic,Garlic,10,g,pantry_staple
+ginataang_isda,malunggay,Moringa leaves,50,g,main
+ginataang_isda,fish_sauce,Fish sauce,20,ml,pantry_staple
+ginataang_isda,siling_labuyo,Bird's eye chili,5,g,main
+sinampalukang_manok,chicken_cutup,Whole chicken cut-up,800,g,main
+sinampalukang_manok,sampalok,Tamarind (fresh/pulp),100,g,main
+sinampalukang_manok,ginger,Ginger,30,g,pantry_staple
+sinampalukang_manok,onion,Red onion,60,g,pantry_staple
+sinampalukang_manok,tomato,Tomato,100,g,main
+sinampalukang_manok,kangkong,Water spinach,150,g,main
+sinampalukang_manok,green_chili,Long green chili,20,g,main
+sinampalukang_manok,fish_sauce,Fish sauce,20,ml,pantry_staple
+panga_tuna,tuna_fresh,Fresh tuna,800,g,main
+panga_tuna,soy_sauce,Soy sauce,60,ml,pantry_staple
+panga_tuna,calamansi,Calamansi,50,g,main
+panga_tuna,garlic,Garlic,20,g,pantry_staple
+panga_tuna,black_pepper,Black pepper,2,g,pantry_staple
+panga_tuna,ginger,Ginger,20,g,pantry_staple
+panga_tuna,cooking_oil,Cooking oil,30,ml,pantry_staple
+panga_tuna,vinegar,Vinegar,40,ml,pantry_staple
+tokwa_gulay,tokwa,Firm tofu,300,g,main
+tokwa_gulay,pechay,Bok choy,200,g,main
+tokwa_gulay,carrot,Carrot,100,g,main
+tokwa_gulay,baguio_beans,Green beans,100,g,main
+tokwa_gulay,onion,Red onion,60,g,pantry_staple
+tokwa_gulay,garlic,Garlic,15,g,pantry_staple
+tokwa_gulay,soy_sauce,Soy sauce,30,ml,pantry_staple
+tokwa_gulay,cooking_oil,Cooking oil,30,ml,pantry_staple
+tokwa_gulay,cornstarch,Cornstarch,10,g,pantry_staple
+banana_cue,saging_saba,Saba banana,600,g,main
+banana_cue,sugar_brown,Brown sugar,100,g,pantry_staple
+banana_cue,cooking_oil,Cooking oil,60,ml,pantry_staple
+turon,saging_saba,Saba banana,400,g,main
+turon,lumpia_wrapper,Lumpia wrapper,12,pc,main
+turon,sugar_brown,Brown sugar,60,g,pantry_staple
+turon,cooking_oil,Cooking oil,60,ml,pantry_staple
+kamote_cue,kamote,Sweet potato,600,g,main
+kamote_cue,sugar_brown,Brown sugar,100,g,pantry_staple
+kamote_cue,cooking_oil,Cooking oil,60,ml,pantry_staple
+maruya,saging_saba,Saba banana,400,g,main
+maruya,flour,All-purpose flour,150,g,main
+maruya,sugar_white,White sugar,50,g,pantry_staple
+maruya,egg,Chicken egg,1,pc,main
+maruya,cooking_oil,Cooking oil,60,ml,pantry_staple
+biko,malagkit,Glutinous rice,200,g,main
+biko,gata,Coconut milk,250,ml,main
+biko,sugar_brown,Brown sugar,120,g,pantry_staple
+ginataang_mais,sweet_corn,Sweet corn,300,g,main
+ginataang_mais,malagkit,Glutinous rice,60,g,main
+ginataang_mais,gata,Coconut milk,300,ml,main
+ginataang_mais,sugar_white,White sugar,60,g,pantry_staple
+binignit,gata,Coconut milk,400,ml,main
+binignit,saging_saba,Saba banana,200,g,main
+binignit,kamote,Sweet potato,200,g,main
+binignit,gabi,Taro root,150,g,main
+binignit,malagkit,Glutinous rice,80,g,main
+binignit,langka_hilaw,Young jackfruit,100,g,main
+binignit,sugar_brown,Brown sugar,80,g,pantry_staple
+adobong_talong,talong,Eggplant,600,g,main
+adobong_talong,soy_sauce,Soy sauce,60,ml,pantry_staple
+adobong_talong,vinegar,Vinegar,60,ml,pantry_staple
+adobong_talong,garlic,Garlic,25,g,pantry_staple
+adobong_talong,onion,Red onion,50,g,pantry_staple
+adobong_talong,cooking_oil,Cooking oil,50,ml,pantry_staple
+adobong_talong,black_pepper,Black pepper,2,g,pantry_staple
+adobong_talong,sugar_brown,Brown sugar,5,g,pantry_staple
+ginisang_togue_tokwa,togue,Mung bean sprouts,400,g,main
+ginisang_togue_tokwa,tokwa,Firm tofu,250,g,main
+ginisang_togue_tokwa,carrot,Carrot,80,g,main
+ginisang_togue_tokwa,onion,Red onion,50,g,pantry_staple
+ginisang_togue_tokwa,garlic,Garlic,10,g,pantry_staple
+ginisang_togue_tokwa,soy_sauce,Soy sauce,30,ml,pantry_staple
+ginisang_togue_tokwa,cooking_oil,Cooking oil,30,ml,pantry_staple
+ginisang_togue_tokwa,black_pepper,Black pepper,1,g,pantry_staple
+sinigang_gulay,kangkong,Water spinach,200,g,main
+sinigang_gulay,okra,Okra,100,g,main
+sinigang_gulay,sitaw,String beans,150,g,main
+sinigang_gulay,labanos,Radish,100,g,main
+sinigang_gulay,talong,Eggplant,150,g,main
+sinigang_gulay,gabi,Taro root,150,g,main
+sinigang_gulay,tomato,Tomato,150,g,main
+sinigang_gulay,onion,Red onion,80,g,pantry_staple
+sinigang_gulay,sinigang_mix,Sinigang sa sampalok mix,2,pc,main
+sinigang_gulay,green_chili,Long green chili,20,g,main
+sinigang_gulay,salt,Salt,3,g,pantry_staple

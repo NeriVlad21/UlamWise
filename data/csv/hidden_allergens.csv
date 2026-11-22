@@ -1,0 +1,154 @@
+keyword,allergen,confidence,note
+hipon,shellfish,definite,shrimp (Tagalog)
+shrimp,shellfish,definite,
+prawn,shellfish,definite,
+sugpo,shellfish,definite,tiger prawn
+alamang,shellfish,definite,tiny shrimp / shrimp paste base
+bagoong alamang,shellfish,definite,shrimp paste
+ginamos,fish,possible,"Visayan fermented fish/small shrimp paste - label varies, treat as fish AND shellfish"
+hibe,shellfish,definite,dried small shrimp
+alimango,shellfish,definite,mud crab
+alimasag,shellfish,definite,blue crab
+crab,shellfish,definite,
+talangka,shellfish,definite,tiny crabs / aligue
+aligue,shellfish,definite,crab fat
+lobster,shellfish,definite,
+ulang,shellfish,definite,river prawn / lobster
+pusit,shellfish,definite,squid (mollusc)
+squid,shellfish,definite,mollusc
+calamares,shellfish,definite,squid
+tahong,shellfish,definite,mussels
+mussel,shellfish,definite,
+talaba,shellfish,definite,oyster
+oyster,shellfish,definite,includes oyster sauce
+oyster sauce,shellfish,definite,also may contain wheat and soy
+halaan,shellfish,definite,clams
+clam,shellfish,definite,
+kuhol,shellfish,definite,snail
+susô,shellfish,definite,snail
+scallop,shellfish,definite,
+fish,fish,definite,
+isda,fish,definite,
+bangus,fish,definite,milkfish
+tilapia,fish,definite,
+galunggong,fish,definite,round scad
+tamban,fish,definite,sardine
+sardinas,fish,definite,canned sardines
+sardines,fish,definite,
+dilis,fish,definite,anchovies
+tuyo,fish,definite,dried herring
+daing,fish,definite,dried marinated fish
+tinapa,fish,definite,smoked fish
+danggit,fish,definite,dried rabbitfish
+tuna,fish,definite,
+tulingan,fish,definite,bullet tuna
+lapu-lapu,fish,definite,grouper
+lapu lapu,fish,definite,grouper
+maya-maya,fish,definite,snapper
+dalagang bukid,fish,definite,
+hasa-hasa,fish,definite,mackerel
+alumahan,fish,definite,
+tanigue,fish,definite,
+dorado,fish,definite,
+patis,fish,definite,fish sauce
+fish sauce,fish,definite,
+bagoong isda,fish,definite,fermented fish paste
+bagoong,fish,possible,ambiguous: alamang (shellfish) vs isda (fish) - flag both unless specified
+monamon,fish,definite,Ilocano fish bagoong
+burong isda,fish,definite,fermented rice and fish
+sinaing na tulingan,fish,definite,
+worcestershire,fish,possible,contains anchovies
+itlog,egg,definite,egg
+egg,egg,definite,
+balut,egg,definite,
+penoy,egg,definite,
+kwek-kwek,egg,definite,quail egg batter
+itlog na maalat,egg,definite,salted egg
+salted egg,egg,definite,
+itlog na pula,egg,definite,
+leche flan,egg,definite,also milk
+mayonnaise,egg,definite,
+mayo,egg,definite,
+meringue,egg,definite,
+pancit canton,egg,possible,many dried egg noodles
+miki,egg,definite,egg noodles
+lomi,egg,possible,thick egg noodles and beaten egg
+pandesal,egg,possible,some bakeries use egg/milk
+gatas,milk,definite,milk
+milk,milk,definite,
+evaporada,milk,definite,evaporated milk
+evaporated milk,milk,definite,
+condensada,milk,definite,condensed milk
+condensed milk,milk,definite,
+keso,milk,definite,cheese
+cheese,milk,definite,
+butter,milk,definite,
+mantikilya,milk,definite,butter
+cream,milk,definite,
+creamer,milk,possible,check label
+yogurt,milk,definite,
+ice cream,milk,definite,
+sorbetes,milk,possible,dirty ice cream may contain milk
+leche flan,milk,definite,
+margarine,milk,possible,some contain milk solids
+mani,peanut,definite,peanut
+peanut,peanut,definite,
+peanut butter,peanut,definite,used in kare-kare
+kare-kare,peanut,definite,sauce usually contains peanuts
+kare kare,peanut,definite,
+satti,peanut,possible,some sauces contain peanut
+pili,tree_nut,definite,Bicol pili nut
+kasoy,tree_nut,definite,cashew
+cashew,tree_nut,definite,
+almond,tree_nut,definite,
+walnut,tree_nut,definite,
+hazelnut,tree_nut,definite,
+pistachio,tree_nut,definite,
+macadamia,tree_nut,definite,
+sans rival,tree_nut,definite,cashew/butter cream
+polvoron,tree_nut,possible,some contain cashew; also milk and wheat
+toyo,soy,definite,soy sauce
+soy sauce,soy,definite,also usually wheat
+soy,soy,definite,
+tokwa,soy,definite,firm tofu
+tofu,soy,definite,
+taho,soy,definite,
+tausi,soy,definite,fermented black beans
+miso,soy,definite,
+soybean,soy,definite,
+tempeh,soy,definite,
+liquid seasoning,soy,possible,Knorr/Maggi style - check label
+chicken cube,soy,possible,bouillon often contains soy/wheat
+bouillon,soy,possible,check label
+hotdog,soy,possible,processed meats often contain soy/wheat/milk
+liver spread,soy,possible,check label
+harina,wheat,definite,flour
+flour,wheat,definite,
+wheat,wheat,definite,
+gluten,wheat,definite,
+tinapay,wheat,definite,bread
+bread,wheat,definite,
+pandesal,wheat,definite,
+pancit canton,wheat,definite,
+canton,wheat,definite,
+misua,wheat,definite,
+macaroni,wheat,definite,
+spaghetti,wheat,definite,
+pasta,wheat,definite,
+noodles,wheat,possible,rice and mung bean noodles are gluten-free; check type
+miki,wheat,definite,
+lomi,wheat,definite,
+lumpia wrapper,wheat,definite,
+wrapper,wheat,possible,
+breadcrumbs,wheat,definite,
+panko,wheat,definite,
+toyo,wheat,definite,most soy sauce contains wheat
+oyster sauce,wheat,possible,many brands contain wheat
+gata,coconut,definite,"coconut milk (optional coconut-sensitivity toggle, NOT counted as tree nut by default)"
+coconut,coconut,definite,
+niyog,coconut,definite,
+buko,coconut,definite,
+latik,coconut,definite,
+kakang gata,coconut,definite,
+ginamos,shellfish,possible,treat as fish AND shellfish when type is unknown
+bagoong,shellfish,possible,ambiguous bagoong: flag both fish and shellfish unless the type is stated

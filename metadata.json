@@ -1,0 +1,8 @@
+{
+  "name": "UlamWise",
+  "description": "Plan smarter. Shop tipid. Mobile-first Filipino meal planning and smart grocery budgeting application with regional customization, deterministic allergen safety, and itemized palengke grocery lists.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

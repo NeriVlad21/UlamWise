@@ -1,0 +1,33 @@
+from_ingredient_id,to_ingredient_id,applies_when,quantity_ratio,note
+bangus,tilapia,budget,1.0,Tilapia is usually cheaper than bangus; similar cooking methods
+galunggong,tilapia,budget,1.0,Galunggong prices swing; tilapia is steadier
+pork_belly,pork_shoulder,budget,1.0,Kasim is leaner and cheaper than liempo
+chicken_breast,chicken_thigh,budget,1.2,Thigh/leg is cheaper; use 20% more weight because of the bone
+beef_sirloin,beef_brisket,budget,1.2,Brisket is cheaper but needs longer cooking
+beef_brisket,pork_shoulder,budget,1.0,Switch to pork when budget is tight (not for halal)
+hipon,tahong,budget,1.2,Mussels are far cheaper; still shellfish
+hipon,tokwa,budget,1.0,Cheap plant protein; not for soy allergy
+pork_shoulder,tokwa,vegetarian,1.0,"Replace pork in ginataan, gisa and monggo dishes"
+pork_ground,tokwa,vegetarian,1.0,Crumble tokwa and fry first
+chicken_cutup,tokwa,vegetarian,1.0,Use fried tokwa cubes in adobo and curry-style dishes
+fish_sauce,soy_sauce,vegetarian,1.0,Patis is a fish product; use toyo or salt
+bagoong_alamang,salt,shellfish_allergy,0.3,Use salt and a little toyo (not for soy allergy)
+bagoong_isda,salt,fish_allergy,0.3,Use salt; flavor will be milder
+oyster_sauce,soy_sauce,shellfish_allergy,0.8,Use toyo plus a pinch of sugar (not for soy allergy)
+fish_sauce,salt,fish_allergy,0.3,Use salt to taste
+soy_sauce,fish_sauce,soy_allergy,0.8,Use patis (not for fish allergy); read labels for hidden soy
+tokwa,egg,soy_allergy,1.0,Use scrambled egg or extra vegetables
+pancit_canton,bihon,gluten_free,1.0,Bihon is rice-based; check the soy sauce too
+macaroni,bihon,gluten_free,1.0,Use rice noodles in sopas
+spaghetti,bihon,gluten_free,1.0,Rice noodles work with the sweet sauce
+miki,bihon,gluten_free,1.0,Use bihon or sotanghon in batchoy/lomi
+flour,cornstarch,gluten_free,0.7,Binder for fritters; texture will differ
+evap_milk,gata,milk_allergy,1.0,Coconut milk gives similar richness; tag as coconut
+cheese,salt,milk_allergy,0.1,Omit cheese and season
+margarine,cooking_oil,milk_allergy,0.8,Use oil
+egg,tokwa,egg_allergy,1.0,Use tokwa; the dish will change
+peanut_butter,gata,peanut_allergy,0.8,Kare-kare sauce with ground toasted rice and gata
+pork_shoulder,chicken_thigh,halal,1.1,Replace pork with chicken or beef
+pork_belly,chicken_thigh,halal,1.0,Replace pork with chicken
+longganisa,chicken_thigh,halal,1.0,Use halal chicken/beef sausage
+sugar_brown,sugar_white,availability,0.9,Substitute when brown sugar is unavailable

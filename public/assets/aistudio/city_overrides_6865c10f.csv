@@ -1,0 +1,32 @@
+city,province,region_key,cuisine_zone,coastal_profile,local_food_notes,boost_dish_ids,price_notes
+Baguio City,Benguet,car,cordilleran,inland,"Cool-climate vegetables (carrots, sayote, beans, strawberries) are cheap; public market in Baguio is the benchmark",pinakbet;chop_suey;ginisang_sayote;nilagang_baka;ginisang_monggo,Veg 15-25% below NCR; sea fish above
+Vigan City,Ilocos Sur,r1,ilocano,coastal,"Vigan longganisa, empanada, bagnet and sukang Iloko are local staples",longsilog;bagnet;pinakbet;dinengdeng;ampalaya_itlog,Bagoong isda is easy to find
+Laoag City,Ilocos Norte,r1,ilocano,coastal,"Bagnet, igado, dinengdeng; salt and garlic from the coast",bagnet;dinengdeng;pinakbet;tortang_talong;sinigang_bangus,
+Dagupan City,Pangasinan,r1,pangasinense,coastal,Bangus capital; fresh and smoked bangus is cheap,sinigang_bangus;paksiw_bangus;dangsilog;dinengdeng;ensaladang_talong,Bangus 15-20% below NCR
+Tuguegarao City,Cagayan,r2,ilocano,inland,Pancit batil patong; river fish; hot climate favors soups and kinilaw,pinakbet;pritong_tilapia;ginisang_monggo;nilagang_baboy;kinilaw_tuna,
+Angeles City,Pampanga,r3,kapampangan,inland,"Sisig, tocino and Kapampangan classics are a local specialty",sisig;tosilog;kare_kare;dinuguan;longsilog,Pork is widely available
+San Fernando City,Pampanga,r3,kapampangan,inland,Provincial capital; Kapampangan home cooking and kakanin,sisig;kare_kare;tosilog;dinuguan;pritong_manok,
+Olongapo City,Zambales,r3,ilocano,coastal,Port city with seafood and mixed cuisines,sinigang_hipon;pritong_galunggong;adobong_pusit;pancit_canton;chicken_adobo,
+Tagaytay City,Cavite,r4a,tagalog,inland,Cool highland; bulalo capital,bulalo;sinampalukang_manok;nilagang_baka;sopas;pochero,Beef shank is a local staple
+Batangas City,Batangas,r4a,tagalog,coastal,"Lomi, bulalo, sinaing na tulingan, tapang taal",lomi;bulalo;bistek_tagalog;paksiw_bangus;pritong_galunggong,
+Lucena City,Quezon,r4a,tagalog,coastal,"Pancit habhab, coconut dishes, fresh seafood",ginataang_kalabasa_sitaw;ginataang_isda;pritong_galunggong;sinigang_hipon;pancit_canton,
+Puerto Princesa City,Palawan,mimaropa,mimaropa,coastal,Seafood-forward; kinilaw and grilled fish,kinilaw_tuna;ginataang_isda;pritong_tilapia;paksiw_bangus;sinigang_hipon,Packaged goods cost more
+Naga City,Camarines Sur,r5,bicolano,coastal,Spicy gata dishes; pili; Bicol express,bicol_express;laing;ginataang_langka;adobong_pusit;ginataang_isda,
+Legazpi City,Albay,r5,bicolano,coastal,"Bicol express, laing, sili ice cream culture",bicol_express;laing;ginataang_isda;ginataang_kalabasa_sitaw;pritong_galunggong,
+Iloilo City,Iloilo,r6,ilonggo,coastal,"La Paz batchoy, pancit molo, KBL; Ilonggo sweet-savory flavors",la_paz_batchoy;kbl;chicken_inasal;humba;kinilaw_tuna,
+Roxas City,Capiz,r6,ilonggo,coastal,"Seafood capital; fresh squid, shrimp and oysters are cheap",adobong_pusit;sinigang_hipon;kinilaw_tuna;ginataang_isda;pritong_galunggong,Seafood 10-20% below NCR
+Bacolod City,Negros Occidental,nir,ilonggo,coastal,Chicken inasal home; sweets like piaya,chicken_inasal;humba;kbl;kinilaw_tuna;binignit,
+Cebu City,Cebu,r7,cebuano,coastal,"Humba, ginataan, kinilaw, dried fish with puso rice",humba;kinilaw_tuna;utan_bisaya;binignit;ginataang_isda,
+Tagbilaran City,Bohol,r7,cebuano,coastal,Seafood and kinilaw; calamay and local sweets,kinilaw_tuna;ginataang_isda;utan_bisaya;humba;pritong_tilapia,
+Dumaguete City,Negros Oriental,nir,cebuano,coastal,Fresh fish market; sans rival and budbud culture,kinilaw_tuna;ginataang_isda;utan_bisaya;humba;paksiw_bangus,
+Tacloban City,Leyte,r8,waray,coastal,"Root crops, coconut and seafood; typhoon recovery pricing",binignit;ginataang_langka;kinilaw_tuna;utan_bisaya;humba,Keep shelf-stable meals in the plan
+Zamboanga City,Zamboanga del Sur,r9,chavacano,coastal,"Sardines, curacha, satti and Chavacano dishes (add dishes as you collect them)",kinilaw_tuna;ginataang_isda;pritong_tilapia;tiyula_itum;adobong_pusit,Sardines and tuna are cheap
+Cagayan de Oro City,Misamis Oriental,r10,cebuano,coastal,Cebuano base; Bukidnon corn and vegetables nearby,humba;chicken_inasal;pritong_tilapia;ginataang_kalabasa_sitaw;nilagang_baka,
+Iligan City,Lanao del Norte,r10,cebuano,coastal,Mixed Cebuano and Maranao influence,piaparan_manok;humba;pritong_tilapia;kinilaw_tuna;chicken_inasal,
+Davao City,Davao del Sur,r11,cebuano,coastal,"Grilled tuna panga, kinilaw, pomelo; large wet and supermarket markets",panga_tuna;kinilaw_tuna;humba;pritong_tilapia;ginataang_isda,Tuna 15% below NCR
+General Santos City,South Cotabato,r12,mindanao_general,coastal,Tuna capital; sashimi-grade fish at market prices,panga_tuna;kinilaw_tuna;sinigang_hipon;pritong_tilapia;ginataang_langka,Tuna 20% below NCR
+Koronadal City,South Cotabato,r12,mindanao_general,inland,Highland vegetables and rice; mixed settler cuisines,ginataang_kalabasa_sitaw;pritong_tilapia;ginisang_monggo;chicken_adobo;nilagang_baboy,
+Cotabato City,Maguindanao del Norte,barmm,mindanao_muslim,coastal,Halal; Maguindanaon beef and chicken dishes,piaparan_manok;tiyula_itum;pritong_manok;pritong_tilapia;ginataang_isda,
+Marawi City,Lanao del Sur,barmm,mindanao_muslim,inland,"Maranao cuisine: piaparan, palapa, lake fish",piaparan_manok;pritong_manok;pritong_tilapia;ginataang_isda;tiyula_itum,
+Butuan City,Agusan del Norte,r13,cebuano,inland,River fish and root crops; Cebuano staples,ginataang_isda;pritong_tilapia;binignit;utan_bisaya;humba,
+Surigao City,Surigao del Norte,r13,cebuano,coastal,Seafood hub; kinilaw and ginataang dishes,kinilaw_tuna;ginataang_isda;pritong_galunggong;binignit;utan_bisaya,
